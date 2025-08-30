@@ -1,0 +1,3480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA AI - Your Personal Assistant 🤖 </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Playfair+Display:wght@700&family=Poppins&family=Roboto+Slab&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.1/markdown-it.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/monokai-sublime.min.css">
+    <!-- KaTeX for LaTeX rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMVIhbCwHlqTurMLFNkBwUPO9FA1i+II9MUKemgigntilDadL" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom Styles & Animations */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #121212;
+            --bg-tertiary: #1f1f1f;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --accent-primary: #8e44ad;
+            --accent-secondary: #9b59b6;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --premium-gold: #FFD700;
+        }
+
+        .light-theme {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f0f2f5;
+            --bg-tertiary: #e4e6eb;
+            --text-primary: #050505;
+            --text-secondary: #65676b;
+            --accent-primary: #8e44ad;
+            --accent-secondary: #9b59b6;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        /* IMPROVEMENT: Send button visibility in light theme */
+        .light-theme #send-btn {
+            background-color: var(--accent-primary);
+            color: white;
+        }
+        .light-theme #send-btn:hover {
+            background-color: var(--accent-secondary);
+        }
+
+        .cyberpunk-theme {
+            --bg-primary: #0f1020;
+            --bg-secondary: #1a1c32;
+            --bg-tertiary: #2a2d4f;
+            --text-primary: #00ffc8;
+            --text-secondary: #7affd4;
+            --accent-primary: #ff00ff;
+            --accent-secondary: #00ffff;
+            --border-color: rgba(0, 255, 255, 0.2);
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .glassmorphic-theme {
+            --bg-primary: rgba(10, 10, 10, 0.7);
+            --bg-secondary: rgba(18, 18, 18, 0.5);
+            --bg-tertiary: rgba(31, 31, 31, 0.4);
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --accent-primary: #8e44ad;
+            --accent-secondary: #9b59b6;
+            --border-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .glassmorphic-theme body {
+             background: transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease, font-family 0.3s ease;
+        }
+
+        .glass-effect {
+            background: rgba(26, 26, 26, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+        }
+        
+        .light-theme .glass-effect {
+             background: rgba(255, 255, 255, 0.6);
+             border: 1px solid var(--border-color);
+        }
+
+        /* Fix for text color in light/dark theme inputs */
+        input, textarea, select {
+            color: var(--text-primary);
+        }
+        input::placeholder, textarea::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .dark-theme input, .dark-theme textarea, .dark-theme select {
+            color: var(--text-primary);
+        }
+        .dark-theme input::placeholder, .dark-theme textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+
+        .aurora-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 70% 20%, rgba(142, 68, 173, 0.15), transparent 60%),
+                radial-gradient(ellipse at 30% 80%, rgba(52, 152, 219, 0.15), transparent 60%);
+            animation: aurora 25s infinite alternate ease-in-out;
+            z-index: -1;
+        }
+
+        @keyframes aurora {
+            0% { transform: rotate(0deg) scale(1.2); opacity: 0.7; }
+            50% { transform: rotate(180deg) scale(1.5); opacity: 1; }
+            100% { transform: rotate(360deg) scale(1.2); opacity: 0.7; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        .fade-in-delay-1 { animation: fadeIn 0.6s 0.2s ease-out forwards; opacity: 0; }
+        .fade-in-delay-2 { animation: fadeIn 0.6s 0.4s ease-out forwards; opacity: 0; }
+        .fade-in-delay-3 { animation: fadeIn 0.6s 0.6s ease-out forwards; opacity: 0; }
+        .fade-in-delay-4 { animation: fadeIn 0.6s 0.8s ease-out forwards; opacity: 0; }
+        .fade-in-delay-5 { animation: fadeIn 0.6s 1.0s ease-out forwards; opacity: 0; }
+        .fade-in-delay-6 { animation: fadeIn 0.6s 1.2s ease-out forwards; opacity: 0; }
+        .fade-in-delay-7 { animation: fadeIn 0.6s 1.4s ease-out forwards; opacity: 0; }
+
+
+        .chat-message { animation: fadeIn 0.4s ease-in-out; }
+
+        .sidebar { transition: min-width 0.3s ease-in-out, width 0.3s ease-in-out; }
+        .sidebar-collapsed { min-width: 80px !important; width: 80px !important; }
+        .sidebar-content .text-label { transition: opacity 0.2s ease, transform 0.2s ease; }
+        .sidebar-collapsed .sidebar-content .text-label { opacity: 0; pointer-events: none; }
+        .sidebar-collapsed .sidebar-content .justify-between { justify-content: center; }
+        
+        /* NEW: Right Sidebar Styles */
+        .right-sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 300px;
+            background-color: var(--bg-secondary);
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 100;
+            border-left: 1px solid var(--border-color);
+        }
+        .right-sidebar.open {
+            transform: translateX(0);
+        }
+
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-secondary); }
+
+        .btn-glow:hover { box-shadow: 0 0 20px var(--accent-primary), 0 0 8px var(--accent-secondary); }
+        .gradient-text {
+            background: -webkit-linear-gradient(45deg, #a855f7, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .premium-gradient-text {
+             background: -webkit-linear-gradient(45deg, var(--premium-gold), #fca5a5, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #assistant-dropdown .fa-chevron-down {
+            transition: transform 0.3s ease-in-out;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        #assistant-dropdown:hover .fa-chevron-down {
+            color: var(--text-primary);
+        }
+        
+        #main-chat-header {
+            transition: background-color 0.5s ease;
+        }
+        
+        .premium-header {
+            background-color: rgba(255, 215, 0, 0.05);
+            border-bottom-color: rgba(255, 215, 0, 0.2) !important;
+        }
+
+        .rating-radio input {
+            display: none;
+        }
+        .rating-radio label {
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 9999px;
+            background-color: var(--bg-secondary);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+        }
+        .rating-radio input:checked + label {
+            background-color: var(--accent-primary);
+            color: #fff;
+            border-color: var(--accent-primary);
+        }
+        .rating-radio label:hover {
+            background-color: var(--bg-tertiary);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: var(--bg-primary);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: modal-pop 0.3s ease-out;
+        }
+        @keyframes modal-pop {
+            from { transform: scale(0.95) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 50;
+        }
+        .floating-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Custom switch slider */
+        .switch .slider:before {
+            transform: translateX(0px);
+        }
+        .switch input:checked + .slider {
+            background-color: var(--accent-primary);
+        }
+        .switch input:checked + .slider:before {
+            transform: translateX(18px);
+        }
+        
+        /* Message bubble styles */
+        .chat-bubble {
+            padding: 1rem;
+            border-radius: 1.5rem;
+            word-break: break-word;
+            line-height: 1.6;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .user-bubble {
+            background-color: var(--accent-primary);
+            color: white;
+            border-bottom-right-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .ai-bubble {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border-bottom-left-radius: 0.5rem;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.05), 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Typing animation cursor */
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background-color: var(--text-primary);
+            animation: blink 0.7s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
+        /* Premium Loading Animation */
+        .loader {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .loader .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--accent-primary);
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        .loader .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .loader .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.5); opacity: 0.5; }
+            50% { transform: scale(1); opacity: 1; }
+        }
+
+
+        /* Markdown rendering styles */
+        .markdown-content p, .markdown-content ul, .markdown-content ol, .markdown-content table {
+            margin-bottom: 1rem;
+        }
+
+        .markdown-content ul, .markdown-content ol {
+            padding-left: 1.5rem;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            font-weight: bold;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content a {
+            color: var(--accent-secondary);
+            text-decoration: underline;
+        }
+        .markdown-content code:not(pre > code) {
+            background-color: var(--bg-tertiary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.5rem;
+        }
+        .markdown-content pre {
+            background-color: #2c2c2c;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .markdown-content th, .markdown-content td {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+        }
+        .markdown-content img {
+            max-width: 100%;
+            border-radius: 0.5rem;
+            height: auto;
+        }
+        
+        .tool-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .tool-btn:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+        .tool-btn:hover:before {
+            width: 200%;
+            height: 200%;
+        }
+        .tool-btn:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
+        }
+        
+        /* Payment Modal Styles */
+        .payment-tabs button {
+            flex: 1;
+            padding: 0.75rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .payment-tabs button.active {
+            border-bottom-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+        .payment-content {
+            display: none;
+        }
+        .payment-content.active {
+            display: block;
+        }
+        
+        .premium-feature {
+            border-color: var(--premium-gold) !important;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        /* CAPTCHA styles */
+        #captcha-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        #captcha-canvas {
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        /* NEW: Canvas Modal Styles */
+        .canvas-modal {
+            align-items: flex-start; /* Align to top */
+            padding-top: 5vh;
+        }
+        .canvas-modal-content {
+            max-width: 90vw;
+            width: 800px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #canvas-code-area {
+            flex-grow: 1;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border: none;
+            resize: none;
+        }
+        #canvas-output {
+            height: 200px;
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        /* NEW: Virtual AI Assistant Modal */
+        #virtual-ai-modal .modal-content {
+            max-width: 400px;
+            text-align: center;
+        }
+        #virtual-ai-visualizer {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            position: relative;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #virtual-ai-visualizer .circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid var(--accent-primary);
+            animation: pulse-ring 2s infinite ease-out;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        /* NEW: Templates View */
+        #templates-view {
+            display: none; /* Hidden by default */
+        }
+        .template-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .template-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            border-color: var(--accent-primary);
+        }
+        /* IMPROVEMENT: Canva-like template styles */
+        .template-preview {
+            aspect-ratio: 9 / 16;
+            background-color: var(--bg-tertiary);
+            border-radius: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+            padding: 1.5rem;
+            color: white;
+        }
+        
+        /* NEW: Full Page Template Editor */
+        #template-editor-modal .modal-content {
+            max-width: 100vw;
+            width: 100%;
+            height: 100vh;
+            border-radius: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #template-editor-toolbar {
+            background-color: var(--bg-secondary);
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toolbar-btn, .toolbar-select, .toolbar-input {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+        }
+        .toolbar-btn:hover, .toolbar-select:hover, .toolbar-input:hover {
+            background-color: var(--bg-primary);
+            border-color: var(--accent-primary);
+        }
+        .toolbar-btn.active {
+            background-color: var(--accent-primary);
+            color: white;
+        }
+        #template-editor-canvas {
+            flex-grow: 1;
+            padding: 2rem;
+            background-color: var(--bg-primary);
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #template-editor-content {
+            width: 100%;
+            max-width: 800px;
+            min-height: 500px;
+            background-color: white;
+            color: black;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            outline: none;
+        }
+
+    </style>
+    
+</head>
+<body class="antialiased dark-theme">
+
+    <div class="aurora-bg"></div>
+
+    <!-- Landing Page -->
+    <div id="landing-page" class="min-h-screen w-screen flex flex-col items-center p-4 text-center overflow-y-auto">
+        <header class="w-full flex justify-center py-6">
+            <div class="flex items-center justify-between w-full max-w-7xl px-4">
+                <div class="flex items-center">
+                    <img id="landing-logo" src="purple.jpg" alt="AURA AI Logo" class="w-10 h-10 mr-2 rounded-full"/>
+                    <h1 class="text-2xl md:text-3xl font-bold tracking-wider gradient-text">AURA AI</h1>
+                </div>
+                <div class="space-x-2 md:space-x-4">
+                    <button id="login-nav-btn" class="bg-bg-tertiary text-text-primary font-semibold py-2 px-6 rounded-full transform hover:scale-105 transition-transform duration-300">
+                        Log In
+                    </button>
+                    <button id="signup-nav-btn" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300 btn-glow">
+                        Sign Up
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <main class="flex flex-col items-center justify-center flex-grow pt-20 pb-20 px-4">
+            <h2 class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight fade-in">The World's Most <span class="gradient-text">Premium</span> AI.</h2>
+            <p class="text-lg md:text-xl max-w-3xl text-text-secondary mb-10 fade-in-delay-1">
+                Experience the power of AURA AI. A beautifully designed, intelligent assistant that helps you summarize, improve, and create content like never before.
+            </p>
+            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 fade-in-delay-2">
+                <button id="landing-start-btn" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300 btn-glow text-lg">
+                    Get Started <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+                <!-- NEW: Virtual AI Assistant Button -->
+                <button id="virtual-ai-btn" class="bg-bg-tertiary text-text-primary font-semibold py-3 px-8 rounded-full transform hover:scale-105 transition-transform duration-300 text-lg flex items-center justify-center">
+                    <i class="fas fa-assistive-listening-systems mr-2"></i> Virtual Assistant
+                </button>
+            </div>
+        </main>
+
+        <!-- NEW: How It Works Section with Graph -->
+        <section id="how-it-works" class="w-full max-w-7xl p-8 mb-16 glass-effect rounded-2xl fade-in-delay-3">
+            <h3 class="text-3xl font-bold mb-8 text-center">How It Works</h3>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="text-left">
+                    <div class="flex items-start mb-4">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-accent-primary text-white flex items-center justify-center font-bold text-lg mr-4">1</div>
+                        <div>
+                            <h4 class="text-xl font-semibold">Input Your Prompt</h4>
+                            <p class="text-text-secondary">Start by typing a question, pasting code, or uploading a document.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start mb-4">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-accent-primary text-white flex items-center justify-center font-bold text-lg mr-4">2</div>
+                        <div>
+                            <h4 class="text-xl font-semibold">Select an Assistant</h4>
+                            <p class="text-text-secondary">Choose from specialized AI assistants like Pro, Creative, or Developer to tailor the response.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-accent-primary text-white flex items-center justify-center font-bold text-lg mr-4">3</div>
+                        <div>
+                            <h4 class="text-xl font-semibold">Get Instant Results</h4>
+                            <p class="text-text-secondary">Receive intelligent, formatted, and actionable responses in seconds.</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <canvas id="efficiency-chart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- IMPROVEMENT: Added Autoplay Video Section -->
+        <section id="video-showcase" class="w-full max-w-7xl p-8 mb-16 glass-effect rounded-2xl fade-in-delay-4">
+            <h3 class="text-3xl font-bold mb-8 text-center">See AURA AI in Action</h3>
+            <div class="flex justify-center">
+                <div class="w-full max-w-5xl aspect-video bg-bg-secondary rounded-lg overflow-hidden shadow-lg">
+                    <!-- IMPORTANT: Replace the src with the path to your MP4 video file -->
+                    <video class="w-full h-full object-cover" controls autoplay muted loop playsinline>
+                        <source src="AURA_AI_Your_Personal_Assistant.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </section>
+        
+        <!-- NEW: Use Cases Section -->
+        <section id="use-cases" class="w-full max-w-7xl p-8 mb-16 glass-effect rounded-2xl fade-in-delay-5">
+            <h3 class="text-3xl font-bold mb-12 text-center">For Everyone, For Everything</h3>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-6 bg-bg-secondary rounded-xl shadow-lg text-center">
+                    <i class="fas fa-user-graduate text-5xl text-accent-primary mb-4"></i>
+                    <h4 class="text-xl font-semibold mb-2">For Students</h4>
+                    <p class="text-text-secondary">Simplify complex topics, get help with homework, and prepare for exams with a knowledgeable study partner.</p>
+                </div>
+                <div class="p-6 bg-bg-secondary rounded-xl shadow-lg text-center">
+                    <i class="fas fa-code text-5xl text-accent-primary mb-4"></i>
+                    <h4 class="text-xl font-semibold mb-2">For Developers</h4>
+                    <p class="text-text-secondary">Write cleaner code, debug faster, and learn new programming languages with an intelligent coding assistant.</p>
+                </div>
+                <div class="p-6 bg-bg-secondary rounded-xl shadow-lg text-center">
+                    <i class="fas fa-paint-brush text-5xl text-accent-primary mb-4"></i>
+                    <h4 class="text-xl font-semibold mb-2">For Creatives</h4>
+                    <p class="text-text-secondary">Overcome writer's block, brainstorm fresh ideas, and craft compelling content for blogs, scripts, and social media.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW: Testimonials Section -->
+        <section id="testimonials" class="w-full max-w-7xl p-8 mb-16 glass-effect rounded-2xl fade-in-delay-6">
+            <h3 class="text-3xl font-bold mb-12 text-center">What Our Users Say</h3>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-6 bg-bg-secondary rounded-xl shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <img src="https://placehold.co/40x40/7e22ce/ffffff?text=A" alt="User Avatar" class="rounded-full mr-4">
+                        <div>
+                            <p class="font-semibold">Alex Johnson</p>
+                            <p class="text-sm text-text-secondary">Developer</p>
+                        </div>
+                    </div>
+                    <p class="text-text-secondary italic">"AURA AI has revolutionized my workflow. The code generation and debugging tools are incredibly powerful and accurate. A must-have for any developer."</p>
+                </div>
+                <div class="p-6 bg-bg-secondary rounded-xl shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <img src="https://placehold.co/40x40/be185d/ffffff?text=S" alt="User Avatar" class="rounded-full mr-4">
+                        <div>
+                            <p class="font-semibold">Samantha Lee</p>
+                            <p class="text-sm text-text-secondary">Content Creator</p>
+                        </div>
+                    </div>
+                    <p class="text-text-secondary italic">"The creative assistant is a game-changer for brainstorming ideas. From writing stories to suggesting social media posts, AURA AI is my go-to creative partner."</p>
+                </div>
+                <div class="p-6 bg-bg-secondary rounded-xl shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <img src="https://placehold.co/40x40/166534/ffffff?text=M" alt="User Avatar" class="rounded-full mr-4">
+                        <div>
+                            <p class="font-semibold">Maria Garcia</p>
+                            <p class="text-sm text-text-secondary">Student</p>
+                        </div>
+                    </div>
+                    <p class="text-text-secondary italic">"The teacher assistant helps me understand complex topics so easily. Explaining concepts and creating quizzes has made studying much more effective."</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="help-section" class="w-full max-w-7xl p-8 mb-16 glass-effect rounded-2xl fade-in-delay-7">
+            <h3 class="text-3xl font-bold mb-8 text-center">Need Help?</h3>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-6 bg-bg-secondary rounded-xl shadow-lg flex flex-col items-center text-center">
+                    <i class="fas fa-question-circle text-5xl text-accent-primary mb-4"></i>
+                    <h4 class="text-xl font-semibold mb-2">FAQs</h4>
+                    <p class="text-text-secondary text-sm">Find instant answers to common questions.</p>
+                    <button id="landing-faq-btn" class="mt-4 text-accent-primary hover:underline font-medium text-sm">Read FAQs <i class="fas fa-arrow-right ml-1"></i></button>
+                </div>
+                <div class="p-6 bg-bg-secondary rounded-xl shadow-lg flex flex-col items-center text-center">
+                    <i class="fas fa-info-circle text-5xl text-accent-primary mb-4"></i>
+                    <h4 class="text-xl font-semibold mb-2">About Us</h4>
+                    <p class="text-text-secondary text-sm">Learn about the technology and team behind AURA AI.</p>
+                    <button id="landing-about-btn" class="mt-4 text-accent-primary hover:underline font-medium text-sm">Learn More <i class="fas fa-arrow-right ml-1"></i></button>
+                </div>
+                <div class="p-6 bg-bg-secondary rounded-xl shadow-lg flex flex-col items-center text-center">
+                    <i class="fas fa-headset text-5xl text-accent-primary mb-4"></i>
+                    <h4 class="text-xl font-semibold mb-2">Contact Support</h4>
+                    <p class="text-text-secondary text-sm">Get in touch with our support team for any issues.</p>
+                    <button id="landing-contact-btn" class="mt-4 text-accent-primary hover:underline font-medium text-sm">Contact <i class="fas fa-arrow-right ml-1"></i></button>
+                </div>
+            </div>
+        </section>
+        <div style="text-align:center; margin:20px auto;">
+            <small>Sponsored</small>
+            <script async="async" data-cfasync="false" src="//pl27477703.profitableratecpm.com/47c0db373aa5ad8a3b386e50cdd918d9/invoke.js"></script>
+            <div id="container-47c0db373aa5ad8a3b386e50cdd918d9"></div>
+        </div>
+        <footer class="text-text-secondary text-sm pb-4 fade-in-delay-5">
+            Created with <i class="fas fa-heart text-red-500"></i> by Akshad Sunil Yeole
+        </footer>
+    </div>
+
+    <!-- Feedback Floating Icon -->
+    <button id="feedback-icon" class="floating-btn w-12 h-12 rounded-full bg-accent-primary text-white flex items-center justify-center shadow-lg transition-transform duration-300">
+        <i class="fas fa-comment-dots text-xl"></i>
+    </button>
+
+    <!-- Modals -->
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content glass-effect">
+            <button id="close-feedback-modal" class="absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold mb-8 text-center">Share Your Feedback</h3>
+            <form id="feedback-form" class="space-y-6">
+                <div>
+                    <label for="name" class="block text-sm font-medium mb-2 text-text-secondary">Your Name</label>
+                    <input type="text" id="feedback-name" class="w-full p-3 rounded-lg bg-bg-secondary border border-bg-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all text-text-primary" placeholder="Enter your name" required>
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium mb-2 text-text-secondary">Your Email</label>
+                    <input type="email" id="feedback-email" class="w-full p-3 rounded-lg bg-bg-secondary border border-bg-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all text-text-primary" placeholder="Enter your email" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-text-secondary">Overall, how would you rate AURA AI?</label>
+                    <div class="flex items-center justify-center space-x-4 rating-radio">
+                        <input type="radio" id="rating-excellent" name="rating" value="excellent" required>
+                        <label for="rating-excellent" class="flex items-center space-x-2">
+                            <i class="fas fa-star text-yellow-400"></i><span>Excellent</span>
+                        </label>
+                        <input type="radio" id="rating-good" name="rating" value="good">
+                        <label for="rating-good" class="flex items-center space-x-2">
+                             <i class="fas fa-star-half-alt text-yellow-400"></i><span>Good</span>
+                        </label>
+                        <input type="radio" id="rating-fair" name="rating" value="fair">
+                        <label for="rating-fair" class="flex items-center space-x-2">
+                            <i class="far fa-star text-yellow-400"></i><span>Fair</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="message" class="block text-sm font-medium mb-2 text-text-secondary">Your Detailed Comments</label>
+                    <textarea id="feedback-message" rows="5" class="w-full p-3 rounded-lg bg-bg-secondary border border-bg-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all text-text-primary" placeholder="Share your thoughts..." required></textarea>
+                </div>
+                
+                <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300 btn-glow">
+                    Submit Feedback
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Help Modals -->
+    <div id="faq-modal" class="modal">
+        <div class="modal-content glass-effect">
+            <button class="close-modal-btn absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold mb-6 text-center">Frequently Asked Questions</h3>
+            <div class="space-y-4 text-left">
+                <div>
+                    <h4 class="font-semibold text-lg">What is AURA AI?</h4>
+                    <p class="text-text-secondary">AURA AI is a powerful, personal AI assistant designed to help with a wide range of tasks including content creation, summarization, translation, and more.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-lg">Is my data safe?</h4>
+                    <p class="text-text-secondary">Yes, we prioritize your privacy. Chat history is stored locally on your device, and you have full control to clear it at any time from the settings panel.</p>
+                </div>
+                 <div>
+                    <h4 class="font-semibold text-lg">How do I change the assistant type?</h4>
+                    <p class="text-text-secondary">You can switch between Pro, Creative, Dev, and Teacher assistants using the dropdown menu at the top of the chat window.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="about-modal" class="modal">
+        <div class="modal-content glass-effect">
+            <button class="close-modal-btn absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold mb-6 text-center">About AURA AI</h3>
+            <p class="text-text-secondary text-center">AURA AI leverages cutting-edge generative AI models to provide a seamless and intelligent user experience. Our mission is to make advanced AI accessible and useful for everyone, wrapped in a beautiful and intuitive interface. This project was created by Akshad Sunil Yeole with a passion for design and technology.</p>
+        </div>
+    </div>
+    <div id="contact-modal" class="modal">
+        <div class="modal-content glass-effect">
+            <button class="close-modal-btn absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold mb-6 text-center">Contact Support</h3>
+            <p class="text-text-secondary text-center">For support, questions, or business inquiries, please reach out to us at <a href="mailto:support@aura-ai.com" class="text-accent-primary hover:underline">support@aura-ai.com</a>. We'd love to hear from you!</p>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="modal">
+        <div class="modal-content glass-effect">
+            <button id="close-payment-modal" class="absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold mb-2 text-center">Upgrade to Premium</h3>
+            <p class="text-center text-text-secondary mb-6">Unlock all features for just ₹99</p>
+            
+            <div class="payment-tabs flex border-b border-bg-tertiary mb-6">
+                <button class="payment-tab-btn active" data-tab="card"><i class="fas fa-credit-card mr-2"></i>Debit Card</button>
+                <button class="payment-tab-btn" data-tab="paypal"><i class="fab fa-paypal mr-2"></i>PayPal</button>
+                <button class="payment-tab-btn" data-tab="phonepe"><i class="fas fa-mobile-alt mr-2"></i>PhonePe</button>
+            </div>
+
+            <div id="card-payment" class="payment-content active">
+                <form id="payment-form" class="space-y-4">
+                    <div>
+                        <label for="card-holder-name" class="block text-sm font-medium text-text-secondary mb-1">Cardholder Name</label>
+                        <input type="text" id="card-holder-name" class="w-full bg-bg-secondary border border-bg-tertiary rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all" placeholder="John Doe" required>
+                    </div>
+                    <div>
+                        <label for="card-number" class="block text-sm font-medium text-text-secondary mb-1">Card Number</label>
+                        <input type="text" id="card-number" class="w-full bg-bg-secondary border border-bg-tertiary rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all" placeholder="0000 0000 0000 0000" required>
+                    </div>
+                    <div class="flex space-x-4">
+                        <div class="flex-1">
+                            <label for="expiry-date" class="block text-sm font-medium text-text-secondary mb-1">Expiry Date</label>
+                            <input type="text" id="expiry-date" class="w-full bg-bg-secondary border border-bg-tertiary rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all" placeholder="MM/YY" required>
+                        </div>
+                        <div class="flex-1">
+                            <label for="cvv" class="block text-sm font-medium text-text-secondary mb-1">CVV</label>
+                            <input type="text" id="cvv" class="w-full bg-bg-secondary border border-bg-tertiary rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all" placeholder="123" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300 btn-glow mt-4">
+                        Pay ₹99
+                    </button>
+                </form>
+            </div>
+            <div id="paypal-payment" class="payment-content text-center">
+                <p class="text-text-secondary mb-4">Click below to complete your payment with PayPal.</p>
+                <button class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-300">
+                    <i class="fab fa-paypal mr-2"></i>Proceed with PayPal
+                </button>
+            </div>
+            <div id="phonepe-payment" class="payment-content text-center">
+                <p class="text-text-secondary mb-4">Scan the QR code with your PhonePe app to complete the payment.</p>
+                <div class="flex justify-center">
+                     <img src="https://placehold.co/200x200/ffffff/000000?text=Scan+Me" alt="PhonePe QR Code" class="rounded-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Login/Signup Page -->
+    <div id="auth-page" class="hidden h-screen w-screen flex items-center justify-center p-4 fade-in">
+        <div class="w-full max-w-md glass-effect rounded-2xl p-8 shadow-2xl">
+            <div class="text-center mb-8">
+                 <div class="flex items-center justify-center">
+                    <img src="purple.jpg" alt="AURA AI Logo" class="w-12 h-12 mr-2 rounded-full"/>
+                    <h1 class="text-3xl font-bold tracking-wider gradient-text">AURA AI</h1>
+                </div>
+                <p id="auth-subtitle" class="text-text-secondary mt-2">Welcome back. Please log in.</p>
+            </div>
+            <form id="auth-form" class="space-y-6">
+                <div id="full-name-field" class="hidden">
+                    <label for="auth-full-name" class="block text-sm font-medium text-text-secondary mb-2">Full Name</label>
+                    <input type="text" id="auth-full-name" class="w-full bg-bg-secondary border border-bg-tertiary rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all text-text-primary placeholder:text-text-secondary" placeholder="John Doe">
+                </div>
+                <div>
+                    <label for="auth-email" class="block text-sm font-medium text-text-secondary mb-2">Email</label>
+                    <input type="email" id="auth-email" class="w-full bg-bg-secondary border border-bg-tertiary rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all text-text-primary placeholder:text-text-secondary" placeholder="you@example.com" required>
+                </div>
+                <div>
+                    <label for="auth-password" class="block text-sm font-medium text-text-secondary mb-2">Password</label>
+                    <input type="password" id="auth-password" class="w-full bg-bg-secondary border border-bg-tertiary rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all text-text-primary placeholder:text-text-secondary" placeholder="••••••••" required>
+                </div>
+                <div id="confirm-password-field" class="hidden">
+                    <label for="auth-confirm-password" class="block text-sm font-medium text-text-secondary mb-2">Confirm Password</label>
+                    <input type="password" id="auth-confirm-password" class="w-full bg-bg-secondary border border-bg-tertiary rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all text-text-primary placeholder:text-text-secondary" placeholder="••••••••" required>
+                </div>
+                <!-- NEW: CAPTCHA Field for Signup -->
+                <div id="captcha-field" class="hidden">
+                    <label for="captcha-input" class="block text-sm font-medium text-text-secondary mb-2">Security Check</label>
+                    <div id="captcha-container">
+                        <canvas id="captcha-canvas" width="150" height="50"></canvas>
+                        <button type="button" id="reload-captcha-btn" class="p-2 text-text-secondary hover:text-text-primary"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                    <input type="text" id="captcha-input" class="mt-2 w-full bg-bg-secondary border border-bg-tertiary rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all text-text-primary placeholder:text-text-secondary" placeholder="Enter text from image" required>
+                </div>
+                <div class="flex items-center justify-between mb-6">
+                    <button type="submit" id="auth-submit-btn" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 px-4 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 btn-glow">
+                        Log In
+                    </button>
+                </div>
+                <p class="text-center text-xs text-text-secondary">
+                    <span id="auth-toggle-text">Don't have an account? <a href="#" id="toggle-auth-link" class="text-accent-primary hover:underline">Sign Up</a></span>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chat App -->
+    <div id="chat-app" class="hidden h-screen w-screen flex">
+        <!-- Left Sidebar -->
+        <nav id="sidebar" class="sidebar bg-bg-secondary h-full flex flex-col p-4 min-w-[288px] relative z-20">
+            <div class="sidebar-content flex-grow flex flex-col overflow-y-auto overflow-x-hidden">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center">
+                        <img id="sidebar-logo" src="purple.jpg" alt="AURA AI Logo" class="w-10 h-10 mr-2 rounded-full text-label"/>
+                        <h1 class="text-2xl md:text-3xl font-bold tracking-wider gradient-text text-label">AURA AI</h1>
+                    </div>
+                    <button id="collapse-btn-inner" class="text-text-secondary hover:text-text-primary transition-colors p-2 rounded-md text-label">
+                        <i class="fas fa-chevron-left text-xl"></i>
+                    </button>
+                </div>
+                
+                <button id="new-chat-btn" class="w-full flex items-center p-3 rounded-lg bg-accent-primary text-white mb-4">
+                    <i class="fas fa-plus mr-3"></i>
+                    <span class="font-semibold text-label">New Chat</span>
+                </button>
+
+                <!-- Universal Search Bar -->
+                <div class="relative mb-4">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary"></i>
+                    <input type="text" id="universal-search" placeholder="Search chats..." class="w-full bg-bg-tertiary rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent-primary text-label placeholder:text-text-secondary">
+                </div>
+                
+                <!-- NEW: Projects Button -->
+                <button id="projects-btn" class="w-full flex items-center p-3 rounded-lg bg-bg-tertiary hover:bg-opacity-75 mb-4">
+                    <i class="fas fa-folder-open mr-3"></i>
+                    <span class="font-semibold text-label">Projects</span>
+                </button>
+
+                <!-- Main Chat History & Projects -->
+                <div id="sidebar-scroll-area" class="flex-grow pr-2 text-label overflow-y-auto">
+                    <!-- Projects will be dynamically added here -->
+                    <div id="projects-container" class="space-y-2 mb-4"></div>
+                    
+                    <div class="flex items-center text-sm font-semibold text-text-secondary mb-2 text-label">
+                        <i class="fas fa-history mr-2"></i> Chat History
+                    </div>
+                    <div id="chat-history" class="space-y-2">
+                        <!-- Chat history will be dynamically added here -->
+                    </div>
+                </div>
+                
+                <!-- Sidebar Footer -->
+                <div class="mt-4 border-t border-bg-tertiary pt-4">
+                    <!-- User Profile Section at bottom -->
+                    <div id="user-profile" class="flex items-center mb-6 p-2 rounded-lg bg-bg-tertiary text-label">
+                        <img id="user-avatar" src="https://placehold.co/40x40/5a5a5a/ffffff?text=U" alt="User Avatar" class="rounded-full mr-3">
+                        <div class="flex-grow">
+                            <div id="user-name-display" class="font-semibold text-text-primary">User Name</div>
+                            <div class="flex items-center">
+                                <div id="user-email-display" class="text-sm text-text-secondary mr-2">aura_user@example.com</div>
+                                <div id="user-tier-badge" class="text-xs font-bold px-2 py-0.5 rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="settings-btn" class="w-full flex items-center p-3 rounded-lg bg-bg-tertiary hover:bg-bg-primary transition-colors mb-2">
+                        <i class="fas fa-cog mr-3 text-text-primary"></i>
+                        <span class="font-semibold text-text-primary text-label">Settings</span>
+                    </button>
+                    <button id="data-control-btn" class="w-full flex items-center p-3 rounded-lg bg-bg-tertiary hover:bg-bg-primary transition-colors">
+                        <i class="fas fa-database mr-3 text-text-primary"></i>
+                        <span class="font-semibold text-text-primary text-label">Data Control</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+       
+        <!-- Main Chat Area -->
+        <main class="flex-grow flex flex-col h-full bg-bg-primary">
+             <header id="main-chat-header" class="flex items-center justify-between p-4 border-b border-bg-tertiary">
+                 <button id="collapse-btn-outer" class="text-text-secondary hover:text-text-primary transition-colors p-2 rounded-md">
+                    <i class="fas fa-chevron-right text-xl"></i>
+                </button>
+                <!-- Assistant dropdown -->
+                <div id="assistant-dropdown" class="relative group cursor-pointer">
+                    <div class="flex items-center space-x-2 text-lg font-bold tracking-wider">
+                        <span id="assistant-name">AURA AI - Pro</span>
+                        <i class="fas fa-chevron-down text-sm text-text-secondary transition-transform duration-300 group-hover:rotate-180"></i>
+                    </div>
+                    <div id="assistant-menu" class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-56 bg-bg-tertiary rounded-lg shadow-lg p-2 hidden z-10">
+                        <button data-assistant="professional" class="w-full text-left flex items-center space-x-2 p-2 rounded-lg hover:bg-bg-primary transition-colors">
+                            <i class="fas fa-briefcase text-accent-primary"></i> <span class="text-sm">Pro</span>
+                        </button>
+                        <button data-assistant="creative" class="w-full text-left flex items-center space-x-2 p-2 rounded-lg hover:bg-bg-primary transition-colors">
+                            <i class="fas fa-paint-brush text-accent-primary"></i> <span class="text-sm">Creative</span>
+                        </button>
+                        <button data-assistant="developer" class="w-full text-left flex items-center space-x-2 p-2 rounded-lg hover:bg-bg-primary transition-colors">
+                            <i class="fas fa-code text-accent-primary"></i> <span class="text-sm">Dev</span>
+                        </button>
+                        <button data-assistant="teacher" class="w-full text-left flex items-center space-x-2 p-2 rounded-lg hover:bg-bg-primary transition-colors">
+                            <i class="fas fa-chalkboard-teacher text-accent-primary"></i> <span class="text-sm">Teacher</span>
+                        </button>
+                        <div class="border-t border-border-color my-1"></div>
+                        <!-- NEW: Premium Features Dropdown -->
+                        <div class="premium-section">
+                             <p class="px-2 pt-2 pb-1 text-xs font-semibold text-yellow-400">AURA AI - PRO</p>
+                             <button data-premium-feature="trip-planner" class="w-full text-left flex items-center space-x-2 p-2 rounded-lg hover:bg-bg-primary transition-colors">
+                                <i class="fas fa-plane-departure text-yellow-500"></i> <span class="text-sm">Trip Planner</span>
+                            </button>
+                            <button data-premium-feature="recipes" class="w-full text-left flex items-center space-x-2 p-2 rounded-lg hover:bg-bg-primary transition-colors">
+                                <i class="fas fa-utensils text-yellow-500"></i> <span class="text-sm">Recipes</span>
+                            </button>
+                        </div>
+                        <div class="border-t border-border-color my-1"></div>
+                        <button id="upgrade-btn" class="w-full text-left flex items-center space-x-2 p-2 rounded-lg hover:bg-bg-primary transition-colors">
+                            <i class="fas fa-rocket text-green-500"></i> <span class="text-sm font-semibold">Upgrade</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- NEW: Right sidebar toggle -->
+                <button id="right-sidebar-toggle" class="text-text-secondary hover:text-text-primary transition-colors p-2 rounded-md">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </header>
+
+            <div id="chat-welcome-screen" class="flex-grow flex flex-col items-center justify-center p-8 text-center text-text-secondary">
+                <h2 class="text-5xl font-extrabold mb-2 gradient-text fade-in-delay-1">AURA AI</h2>
+                <p id="welcome-message" class="text-xl font-medium fade-in-delay-2">Hello, User!</p>
+            </div>
+            
+            <div class="flex-grow overflow-y-auto p-4 md:p-8 hidden" id="chat-container">
+                <!-- Chat messages will be dynamically added here -->
+            </div>
+            
+            <!-- NEW: Templates View -->
+            <div id="templates-view" class="flex-grow flex-col items-center p-8 text-text-secondary hidden">
+                <h2 class="text-3xl font-bold mb-4">Explore Templates</h2>
+                <p class="mb-6">Find templates for emails, code, social media, and more.</p>
+                <div class="w-full max-w-lg relative mb-8">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary"></i>
+                    <input type="text" id="template-search-input" placeholder="e.g., 'Birthday', 'Resume', 'Invoice'" class="w-full bg-bg-tertiary rounded-full pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent-primary">
+                </div>
+                <div id="template-results" class="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Template results will be shown here -->
+                </div>
+            </div>
+
+            <div id="chat-input-area" class="p-4 md:p-8 border-t border-bg-tertiary">
+                <div id="file-indicator" class="hidden items-center justify-between bg-bg-tertiary p-2 rounded-lg mb-2">
+                    <div class="flex items-center truncate">
+                        <i class="fas fa-file-alt text-text-secondary mr-2"></i>
+                        <span id="file-indicator-name" class="text-sm text-text-primary truncate"></span>
+                    </div>
+                    <button id="remove-file-btn" class="text-text-secondary hover:text-red-500 p-1"><i class="fas fa-times"></i></button>
+                </div>
+                
+                <!-- NEW: Selected Tool Indicator -->
+                <div id="selected-tool-indicator" class="hidden items-center bg-bg-tertiary p-2 rounded-lg mb-2 text-sm">
+                    <i class="fas fa-wrench text-accent-primary mr-2"></i>
+                    <span id="selected-tool-name" class="font-semibold"></span>
+                    <button id="clear-tool-btn" class="ml-auto text-text-secondary hover:text-red-500 p-1"><i class="fas fa-times"></i></button>
+                </div>
+
+                <div class="flex items-center rounded-xl glass-effect border border-bg-tertiary p-2">
+                    <button id="voice-input-btn" class="text-text-secondary hover:text-accent-primary p-2 transition-colors">
+                        <i class="fas fa-microphone text-xl"></i>
+                    </button>
+                    <button id="file-upload-btn" class="text-text-secondary hover:text-accent-primary p-2 transition-colors">
+                        <i class="fas fa-paperclip text-xl"></i>
+                    </button>
+                    <!-- NEW: Tools Dropdown -->
+                    <div class="relative">
+                         <button id="tools-dropdown-btn" class="text-text-secondary hover:text-accent-primary p-2 transition-colors">
+                            <i class="fas fa-wrench text-xl"></i>
+                        </button>
+                        <div id="tools-dropdown-menu" class="hidden absolute bottom-full mb-2 w-48 bg-bg-tertiary rounded-lg shadow-lg p-2 z-10">
+                            <button data-tool="deep-research" class="tool-select-btn w-full text-left flex items-center justify-between space-x-2 p-2 rounded-lg hover:bg-bg-primary transition-colors">
+                                <span class="flex items-center"><i class="fab fa-google text-blue-500 mr-2"></i> <span class="text-sm">Deep Research</span></span>
+                                <i class="fas fa-check text-green-500 opacity-0"></i>
+                            </button>
+                             <button data-tool="open-canvas" class="tool-select-btn w-full text-left flex items-center justify-between space-x-2 p-2 rounded-lg hover:bg-bg-primary transition-colors">
+                                <span class="flex items-center"><i class="fas fa-palette text-cyan-400 mr-2"></i> <span class="text-sm">Open Canvas</span></span>
+                                <i class="fas fa-check text-green-500 opacity-0"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- NEW: Share Button -->
+                    <button id="share-chat-btn" class="text-text-secondary hover:text-accent-primary p-2 transition-colors">
+                        <i class="fas fa-share-alt text-xl"></i>
+                    </button>
+
+                    <input type="text" id="user-input" placeholder="Type your message..." class="flex-grow bg-transparent text-text-primary border-none focus:outline-none px-4 py-2 placeholder:text-text-secondary">
+                    
+                    <!-- NEW: Improve Prompt Button & Dropdown -->
+                    <div class="relative group">
+                        <button id="improve-prompt-btn" class="text-text-secondary hover:text-accent-primary p-2 transition-colors">
+                            <i class="fas fa-magic text-xl"></i>
+                        </button>
+                        <div id="improve-prompt-menu" class="hidden absolute bottom-full right-0 mb-2 w-48 bg-bg-tertiary rounded-lg shadow-lg p-2 z-10">
+                            <button data-improve="professional" class="w-full text-left p-2 rounded-lg hover:bg-bg-primary transition-colors text-sm">Make Professional</button>
+                            <button data-improve="casual" class="w-full text-left p-2 rounded-lg hover:bg-bg-primary transition-colors text-sm">Make Casual</button>
+                            <button data-improve="concise" class="w-full text-left p-2 rounded-lg hover:bg-bg-primary transition-colors text-sm">Make Concise</button>
+                            <button data-improve="detailed" class="w-full text-left p-2 rounded-lg hover:bg-bg-primary transition-colors text-sm">Make Detailed</button>
+                        </div>
+                    </div>
+
+                    <button id="send-btn" class="bg-accent-primary text-white p-2 rounded-xl transition-transform transform hover:scale-105 ml-2 w-10 h-10 flex items-center justify-center">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                <!-- NEW: Quick Prompts Dropdown -->
+                <div class="relative mt-2">
+                    <button id="quick-prompts-btn" class="w-full text-left text-sm p-2 bg-bg-tertiary rounded-lg text-text-secondary hover:text-text-primary">
+                        <i class="fas fa-bolt mr-2"></i> Quick Prompts...
+                    </button>
+                    <div id="quick-prompts-menu" class="hidden absolute bottom-full mb-2 w-full bg-bg-tertiary rounded-lg shadow-lg p-2 z-10 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <!-- Quick prompts will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- NEW: Right Sidebar -->
+        <aside id="right-sidebar" class="right-sidebar p-4 flex flex-col">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold">Menu</h3>
+                <button id="right-sidebar-close" class="p-2 rounded-full hover:bg-bg-tertiary">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="flex-grow space-y-2">
+                 <button id="templates-btn" class="w-full flex items-center p-3 rounded-lg hover:bg-bg-tertiary transition-colors">
+                    <i class="fas fa-layer-group w-6 text-center mr-3"></i>
+                    <span class="font-semibold">Templates</span>
+                </button>
+                <button id="activity-btn" class="w-full flex items-center p-3 rounded-lg hover:bg-bg-tertiary transition-colors">
+                    <i class="fas fa-history w-6 text-center mr-3"></i>
+                    <span class="font-semibold">Activity</span>
+                </button>
+                 <button id="favorites-btn" class="w-full flex items-center p-3 rounded-lg hover:bg-bg-tertiary transition-colors">
+                    <i class="fas fa-star w-6 text-center mr-3"></i>
+                    <span class="font-semibold">Favorites</span>
+                </button>
+            </div>
+            <div class="mt-auto">
+                 <button class="w-full flex items-center p-3 rounded-lg bg-red-500 bg-opacity-20 text-red-400 hover:bg-opacity-30 transition-colors">
+                    <i class="fas fa-sign-out-alt w-6 text-center mr-3"></i>
+                    <span class="font-semibold">Log Out</span>
+                </button>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- Settings Panel Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content glass-effect">
+            <button id="close-settings-modal" class="absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold mb-6 text-center">Settings</h3>
+            <div class="space-y-6">
+                <!-- Theme Options -->
+                <div>
+                    <h4 class="text-xl font-semibold mb-2">Theme</h4>
+                    <div class="flex flex-wrap gap-4">
+                        <button class="theme-btn px-4 py-2 rounded-full border border-bg-tertiary hover:bg-bg-tertiary transition-colors" data-theme="dark">Dark</button>
+                        <button class="theme-btn px-4 py-2 rounded-full border border-bg-tertiary hover:bg-bg-tertiary transition-colors" data-theme="light">Light</button>
+                        <button class="theme-btn px-4 py-2 rounded-full border border-bg-tertiary hover:bg-bg-tertiary transition-colors" data-theme="cyberpunk">Cyberpunk</button>
+                        <button class="theme-btn px-4 py-2 rounded-full border border-bg-tertiary hover:bg-bg-tertiary transition-colors" data-theme="glassmorphic">Glassmorphic</button>
+                    </div>
+                </div>
+
+                <!-- Voice Selection -->
+                <div>
+                    <h4 class="text-xl font-semibold mb-2">Voice</h4>
+                    <select id="voice-select" class="w-full p-3 rounded-lg bg-bg-secondary border border-bg-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all text-text-primary">
+                        <!-- Voices will be populated here by JS -->
+                    </select>
+                </div>
+
+                <!-- Language Selection -->
+                <div>
+                    <h4 class="text-xl font-semibold mb-2">Language</h4>
+                    <select id="language-select" class="w-full p-3 rounded-lg bg-bg-secondary border border-bg-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all text-text-primary">
+                        <option value="en">English (US)</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                    </select>
+                </div>
+
+                <!-- Data & Privacy -->
+                <div>
+                    <h4 class="text-xl font-semibold mb-2">Data & Privacy</h4>
+                    <div class="flex items-center justify-between p-3 bg-bg-secondary rounded-lg">
+                        <span>Store chat history</span>
+                        <label class="switch relative inline-block w-10 h-6">
+                            <input type="checkbox" id="chat-history-toggle" checked>
+                            <span class="slider absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-bg-tertiary rounded-full transition-colors duration-300 before:absolute before:content-[''] before:h-4 before:w-4 before:left-1 before:bottom-1 before:bg-white before:rounded-full before:transition-transform before:duration-300"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Chat Export -->
+                <div>
+                    <h4 class="text-xl font-semibold mb-2">Export</h4>
+                    <button id="export-chat-btn" class="w-full bg-bg-tertiary text-text-primary font-semibold py-2 px-6 rounded-lg transform hover:scale-105 transition-transform duration-300">
+                        Download Chat as .txt
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- File Upload Modal -->
+    <div id="file-upload-modal" class="modal">
+        <div class="modal-content glass-effect">
+            <button id="close-file-upload-modal" class="absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold mb-6 text-center">Upload Document</h3>
+            <div class="text-center mb-6">
+                <i class="fas fa-file-upload text-6xl text-accent-primary mb-4"></i>
+                <p class="text-text-secondary">All file types are supported</p>
+            </div>
+            <input type="file" id="file-input" class="w-full p-3 rounded-lg bg-bg-secondary border border-bg-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all text-text-primary">
+        </div>
+    </div>
+
+    <!-- Data Control Modal -->
+    <div id="data-control-modal" class="modal">
+        <div class="modal-content glass-effect">
+            <button id="close-data-control-modal" class="absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold mb-6 text-center">Data Control</h3>
+            <div id="data-control-list" class="space-y-2 max-h-96 overflow-y-auto">
+                <!-- Chat data will be dynamically populated here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- NEW: Projects Modal -->
+    <div id="projects-modal" class="modal">
+        <div class="modal-content glass-effect">
+            <button id="close-projects-modal" class="absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold mb-6 text-center">Manage Projects</h3>
+            <form id="new-project-form" class="flex gap-2 mb-4">
+                <input type="text" id="new-project-name" placeholder="New project folder name..." class="flex-grow w-full p-3 rounded-lg bg-bg-secondary border border-bg-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary transition-all text-text-primary" required>
+                <button type="submit" class="bg-accent-primary text-white font-semibold py-2 px-4 rounded-lg btn-glow">Create</button>
+            </form>
+            <div id="projects-list" class="space-y-2 max-h-64 overflow-y-auto">
+                <!-- Project folders will be listed here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- NEW: Move to Project Modal -->
+    <div id="move-to-project-modal" class="modal">
+        <div class="modal-content glass-effect">
+            <button id="close-move-to-project-modal" class="absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold mb-6 text-center">Move Chat to Project</h3>
+            <div id="move-to-project-list" class="space-y-2">
+                <!-- List of projects to move chat to -->
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Canvas Modal for Code -->
+    <div id="canvas-modal" class="modal canvas-modal">
+        <div class="modal-content glass-effect canvas-modal-content">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-2xl font-bold">Code Canvas</h3>
+                <div class="flex items-center space-x-2">
+                    <button id="canvas-run-btn" class="bg-green-500 text-white font-semibold py-2 px-4 rounded-lg btn-glow"><i class="fas fa-play mr-2"></i>Run</button>
+                    <button id="canvas-copy-btn" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg btn-glow"><i class="fas fa-copy mr-2"></i>Copy</button>
+                    <button id="close-canvas-modal" class="text-text-secondary hover:text-text-primary transition-colors text-2xl p-2">&times;</button>
+                </div>
+            </div>
+            <textarea id="canvas-code-area" class="w-full p-3 rounded-lg"></textarea>
+            <div id="canvas-output-container" class="mt-4">
+                <h4 class="font-semibold mb-2">Output:</h4>
+                <pre id="canvas-output"></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Virtual AI Assistant Modal -->
+    <div id="virtual-ai-modal" class="modal">
+        <div class="modal-content glass-effect">
+            <button id="close-virtual-ai-modal" class="absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors text-2xl">&times;</button>
+            <h3 class="text-3xl font-bold mb-4 text-center">Virtual Assistant</h3>
+            <div id="virtual-ai-visualizer">
+                <i class="fas fa-assistive-listening-systems text-6xl text-accent-primary"></i>
+                <div class="circle"></div>
+                <div class="circle" style="animation-delay: 1s;"></div>
+            </div>
+            <p id="virtual-ai-status" class="text-text-secondary h-12">Tap the visualizer to speak</p>
+        </div>
+    </div>
+    
+    <!-- NEW: Full Page Template Editor Modal -->
+    <div id="template-editor-modal" class="modal">
+        <div class="modal-content">
+            <div id="template-editor-toolbar">
+                <button id="close-template-editor-btn" class="toolbar-btn bg-red-500 text-white hover:bg-red-600"><i class="fas fa-times"></i> Close</button>
+                <div class="w-px h-6 bg-border-color mx-2"></div>
+                <button class="toolbar-btn" data-command="bold"><i class="fas fa-bold"></i></button>
+                <button class="toolbar-btn" data-command="italic"><i class="fas fa-italic"></i></button>
+                <button class="toolbar-btn" data-command="underline"><i class="fas fa-underline"></i></button>
+                <div class="w-px h-6 bg-border-color mx-2"></div>
+                <select class="toolbar-select" data-command="fontName">
+                    <option value="Inter">Inter</option>
+                    <option value="Poppins">Poppins</option>
+                    <option value="Roboto Slab">Roboto Slab</option>
+                    <option value="Playfair Display">Playfair Display</option>
+                    <option value="Lobster">Lobster</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Courier New">Courier New</option>
+                </select>
+                <select class="toolbar-select" data-command="fontSize">
+                    <option value="1">10px</option>
+                    <option value="2">13px</option>
+                    <option value="3">16px</option>
+                    <option value="4">18px</option>
+                    <option value="5">24px</option>
+                    <option value="6">32px</option>
+                    <option value="7">48px</option>
+                </select>
+                <div class="w-px h-6 bg-border-color mx-2"></div>
+                 <button class="toolbar-btn" data-command="justifyLeft"><i class="fas fa-align-left"></i></button>
+                 <button class="toolbar-btn" data-command="justifyCenter"><i class="fas fa-align-center"></i></button>
+                 <button class="toolbar-btn" data-command="justifyRight"><i class="fas fa-align-right"></i></button>
+                <div class="w-px h-6 bg-border-color mx-2"></div>
+                <label for="foreColor" class="text-sm">Color:</label>
+                <input type="color" id="foreColor" class="toolbar-input" data-command="foreColor">
+                <div class="flex-grow"></div>
+                <button id="download-template-btn" class="toolbar-btn bg-green-600 text-white hover:bg-green-700"><i class="fas fa-download mr-2"></i>Download</button>
+            </div>
+            <div id="template-editor-canvas">
+                <div id="template-editor-content" contenteditable="true"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Message box for alerts -->
+    <div id="message-box" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-bg-tertiary text-text-primary p-4 rounded-lg shadow-xl hidden z-[101]">
+        <div class="flex items-center space-x-2">
+            <i id="message-box-icon" class="fas fa-check-circle text-green-500 text-xl"></i>
+            <span id="message-box-text"></span>
+        </div>
+    </div>
+
+    <script>
+        // --- Gemini API Key ---
+        // IMPORTANT: REPLACE "" WITH YOUR ACTUAL GEMINI API KEY
+        const API_KEY = "AIzaSyAt8fRf93KHq2ILzkC2Dn-rY6FJKs78r48";
+        const VIRTUAL_AI_API_KEY = "AIzaSyAt8fRf93KHq2ILzkC2Dn-rY6FJKs78r48"; // Separate key for virtual assistant if needed
+        
+        // --- Payment Configuration ---
+        // IMPORTANT: REPLACE WITH YOUR EMAIL ADDRESS TO RECEIVE PAYMENT NOTIFICATIONS
+        const PAYMENT_EMAIL = "yeolesarika123@gmail.com";
+        
+        // --- Feedback Configuration ---
+        // IMPORTANT: REPLACE WITH YOUR EMAIL ADDRESS TO RECEIVE FEEDBACK
+        const FEEDBACK_EMAIL = "yeolesarika123@gmail.com";
+
+
+        // --- Global State & Element Caching ---
+        let isLoginView = true;
+        let currentAssistant = 'professional';
+        let activeChatId = null;
+        let userName = 'User';
+        let userEmail = 'aura_user@example.com';
+        let userTier = 'free'; // 'free' or 'premium'
+        let isSidebarCollapsed = false;
+        let abortController = null; // To stop API requests
+        let uploadedFileContent = null; // To store content of uploaded file
+        let uploadedFileName = null; // To store the name of the uploaded file
+        let captchaText = ''; // To store the current CAPTCHA text
+        let chatToMove = null; // Store chat ID when moving to project
+        let selectedTool = null; // To store the currently selected tool
+        let userActivity = []; // To store user activity
+        let favoriteTemplates = []; // To store favorite templates
+        let currentEditingTemplate = null; // To store the template being edited
+        
+        // Chat data structure
+        let chats = {
+            'professional': {},
+            'creative': {},
+            'developer': {},
+            'teacher': {},
+            'trip-planner': {},
+            'recipes': {}
+        };
+        // NEW: Projects data structure
+        let projects = {};
+        
+        const md = window.markdownit({
+            highlight: function (str, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    try {
+                        return `<div class="code-block-header"><span class="language-name">${lang}</span><button class="copy-code-btn"><i class="fas fa-copy"></i> Copy</button><button class="open-canvas-btn"><i class="fas fa-expand"></i> Canvas</button></div><pre class="hljs"><code>` +
+                            hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                            '</code></pre>';
+                    } catch (__) {}
+                }
+                return `<div class="code-block-header"><span class="language-name">text</span><button class="copy-code-btn"><i class="fas fa-copy"></i> Copy</button></div><pre class="hljs"><code>` + md.utils.escapeHtml(str) + '</code></pre>';
+            }
+        });
+
+        // Pages
+        const landingPage = document.getElementById('landing-page');
+        const authPage = document.getElementById('auth-page');
+        const chatApp = document.getElementById('chat-app');
+
+        // Modals
+        const feedbackModal = document.getElementById('feedback-modal');
+        const settingsModal = document.getElementById('settings-modal');
+        const fileUploadModal = document.getElementById('file-upload-modal');
+        const paymentModal = document.getElementById('payment-modal');
+        const dataControlModal = document.getElementById('data-control-modal');
+        const faqModal = document.getElementById('faq-modal');
+        const aboutModal = document.getElementById('about-modal');
+        const contactModal = document.getElementById('contact-modal');
+        const projectsModal = document.getElementById('projects-modal');
+        const moveToProjectModal = document.getElementById('move-to-project-modal');
+        const canvasModal = document.getElementById('canvas-modal');
+        const virtualAiModal = document.getElementById('virtual-ai-modal');
+        const templateEditorModal = document.getElementById('template-editor-modal');
+        const messageBox = document.getElementById('message-box');
+        const messageBoxText = document.getElementById('message-box-text');
+        const messageBoxIcon = document.getElementById('message-box-icon');
+
+        // Buttons & Inputs
+        const loginNavBtn = document.getElementById('login-nav-btn');
+        const signupNavBtn = document.getElementById('signup-nav-btn');
+        const loginForm = document.getElementById('auth-form');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const closeFeedbackModal = document.getElementById('close-feedback-modal');
+        const landingStartBtn = document.getElementById('landing-start-btn');
+        const virtualAiBtn = document.getElementById('virtual-ai-btn');
+        const landingFaqBtn = document.getElementById('landing-faq-btn');
+        const landingAboutBtn = document.getElementById('landing-about-btn');
+        const landingContactBtn = document.getElementById('landing-contact-btn');
+        const collapseBtnOuter = document.getElementById('collapse-btn-outer');
+        const collapseBtnInner = document.getElementById('collapse-btn-inner');
+        const newChatBtn = document.getElementById('new-chat-btn');
+        const settingsBtn = document.getElementById('settings-btn');
+        const dataControlBtn = document.getElementById('data-control-btn');
+        const closeSettingsModal = document.getElementById('close-settings-modal');
+        const closeDataControlModal = document.getElementById('close-data-control-modal');
+        const exportChatBtn = document.getElementById('export-chat-btn');
+        const voiceInputBtn = document.getElementById('voice-input-btn');
+        const fileUploadBtn = document.getElementById('file-upload-btn');
+        const fileInput = document.getElementById('file-input');
+        const closeFileUploadModal = document.getElementById('close-file-upload-modal');
+        const closePaymentModal = document.getElementById('close-payment-modal');
+        const closeCanvasModal = document.getElementById('close-canvas-modal');
+        const closeVirtualAiModal = document.getElementById('close-virtual-ai-modal');
+        const closeTemplateEditorBtn = document.getElementById('close-template-editor-btn');
+        const upgradeBtn = document.getElementById('upgrade-btn');
+        const universalSearchInput = document.getElementById('universal-search');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const improvePromptBtn = document.getElementById('improve-prompt-btn');
+        const improvePromptMenu = document.getElementById('improve-prompt-menu');
+        const chatContainer = document.getElementById('chat-container');
+        const chatWelcomeScreen = document.getElementById('chat-welcome-screen');
+        const chatHistoryList = document.getElementById('chat-history');
+        const quickPromptsBtn = document.getElementById('quick-prompts-btn');
+        const quickPromptsMenu = document.getElementById('quick-prompts-menu');
+        const assistantDropdown = document.getElementById('assistant-dropdown');
+        const assistantMenu = document.getElementById('assistant-menu');
+        const assistantNameDisplay = document.getElementById('assistant-name');
+        const userNameDisplay = document.getElementById('user-name-display');
+        const userEmailDisplay = document.getElementById('user-email-display');
+        const userTierBadge = document.getElementById('user-tier-badge');
+        const userAvatar = document.getElementById('user-avatar');
+        const voiceSelect = document.getElementById('voice-select');
+        const mainChatHeader = document.getElementById('main-chat-header');
+        const projectsBtn = document.getElementById('projects-btn');
+        const closeProjectsModal = document.getElementById('close-projects-modal');
+        const newProjectForm = document.getElementById('new-project-form');
+        const projectsListContainer = document.getElementById('projects-list');
+        const projectsContainer = document.getElementById('projects-container');
+        const closeMoveToProjectModal = document.getElementById('close-move-to-project-modal');
+        const fileIndicator = document.getElementById('file-indicator');
+        const fileIndicatorName = document.getElementById('file-indicator-name');
+        const removeFileBtn = document.getElementById('remove-file-btn');
+        const toolsDropdownBtn = document.getElementById('tools-dropdown-btn');
+        const toolsDropdownMenu = document.getElementById('tools-dropdown-menu');
+        const selectedToolIndicator = document.getElementById('selected-tool-indicator');
+        const selectedToolName = document.getElementById('selected-tool-name');
+        const clearToolBtn = document.getElementById('clear-tool-btn');
+        const canvasCodeArea = document.getElementById('canvas-code-area');
+        const canvasRunBtn = document.getElementById('canvas-run-btn');
+        const canvasCopyBtn = document.getElementById('canvas-copy-btn');
+        const canvasOutput = document.getElementById('canvas-output');
+        const virtualAiVisualizer = document.getElementById('virtual-ai-visualizer');
+        const virtualAiStatus = document.getElementById('virtual-ai-status');
+        const shareChatBtn = document.getElementById('share-chat-btn');
+        const rightSidebar = document.getElementById('right-sidebar');
+        const rightSidebarToggle = document.getElementById('right-sidebar-toggle');
+        const rightSidebarClose = document.getElementById('right-sidebar-close');
+        const templatesBtn = document.getElementById('templates-btn');
+        const activityBtn = document.getElementById('activity-btn');
+        const favoritesBtn = document.getElementById('favorites-btn');
+        const templatesView = document.getElementById('templates-view');
+        const templateSearchInput = document.getElementById('template-search-input');
+        const templateResultsContainer = document.getElementById('template-results');
+        const templateEditorContent = document.getElementById('template-editor-content');
+        const templateEditorToolbar = document.getElementById('template-editor-toolbar');
+        const downloadTemplateBtn = document.getElementById('download-template-btn');
+
+
+        // Elements for dynamic content
+        const sidebar = document.getElementById('sidebar');
+        const themeBtns = document.querySelectorAll('.theme-btn');
+        const sidebarLogo = document.getElementById('sidebar-logo');
+        const landingLogo = document.getElementById('landing-logo');
+
+        // Speech Recognition API
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        let virtualAiRecognition = null;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            virtualAiRecognition = new SpeechRecognition();
+            virtualAiRecognition.continuous = false;
+            virtualAiRecognition.interimResults = false;
+            virtualAiRecognition.lang = 'en-US';
+        } else {
+            console.warn('Web Speech API not supported. Voice input will not work.');
+        }
+        
+        // IMPROVEMENT: More quick prompts
+        const assistantTools = {
+            'professional': [
+                { icon: 'fas fa-file-alt', label: 'Summarize', prompt: 'Summarize the following text:' },
+                { icon: 'fas fa-language', label: 'Translate', prompt: 'Translate the following to English:' },
+                { icon: 'fas fa-check-circle', label: 'Proofread', prompt: 'Proofread this text for grammar and spelling:' },
+                { icon: 'fas fa-envelope', label: 'Draft Email', prompt: 'Draft a professional email about:' },
+                { icon: 'fas fa-chart-line', label: 'Analyze Data', prompt: 'Analyze the following data and provide key insights:' },
+                { icon: 'fas fa-bullhorn', label: 'Write Ad Copy', prompt: 'Write a compelling ad copy for a product that...' }
+            ],
+            'creative': [
+                { icon: 'fas fa-lightbulb', label: 'Brainstorm Ideas', prompt: 'Brainstorm 10 ideas for a new YouTube video about...' },
+                { icon: 'fas fa-pen-nib', label: 'Write Story', prompt: 'Write a short story about a robot who discovers music.' },
+                { icon: 'fas fa-feather', label: 'Write Poem', prompt: 'Write a poem about the city at night.' },
+                { icon: 'fas fa-film', label: 'Create Script', prompt: 'Write a short movie script scene where two characters meet for the first time.' }
+            ],
+            'developer': [
+                { icon: 'fas fa-code', label: 'Generate Code', prompt: 'Generate Python code for a simple web scraper.' },
+                { icon: 'fas fa-bug', label: 'Debug', prompt: 'Find the bug in the following JavaScript code:' },
+                { icon: 'fas fa-book-open', label: 'Explain Concept', prompt: 'Explain the concept of APIs to a beginner.' },
+                { icon: 'fas fa-cogs', label: 'Regex Helper', prompt: 'Write a regular expression that matches a valid email address.' }
+            ],
+            'teacher': [
+                { icon: 'fas fa-question', label: 'Explain Simply', prompt: 'Explain the concept of photosynthesis in simple terms for a 10-year-old.' },
+                { icon: 'fas fa-book', label: 'Create Quiz', prompt: 'Create a 5-question multiple-choice quiz on the American Revolution.' },
+                { icon: 'fas fa-user-graduate', label: 'Lesson Plan', prompt: 'Create a lesson plan for a 1-hour class on the water cycle.' },
+                { icon: 'fas fa-atom', label: 'Science Facts', prompt: 'Give me 5 interesting facts about black holes.' }
+            ],
+            'trip-planner': [
+                { icon: 'fas fa-map-marked-alt', label: 'Create Itinerary', prompt: 'Create a 5-day itinerary for a trip to Paris, France.' },
+                { icon: 'fas fa-utensils', label: 'Find Restaurants', prompt: 'Find 3 top-rated Italian restaurants near the Eiffel Tower.' },
+                { icon: 'fas fa-ticket-alt', label: 'Budget Plan', prompt: 'Help me create a budget for a 7-day trip to Japan.' },
+                { icon: 'fas fa-suitcase-rolling', label: 'Packing List', prompt: 'What should I pack for a 3-day beach vacation in Goa?' }
+            ],
+            'recipes': [
+                { icon: 'fas fa-search', label: 'Find Recipe', prompt: 'Find a recipe for chicken alfredo pasta.' },
+                { icon: 'fas fa-shopping-cart', label: 'Grocery List', prompt: 'Create a grocery list for the chicken alfredo recipe.' },
+                { icon: 'fas fa-balance-scale', label: 'Calorie Count', prompt: 'Estimate the calorie count for a serving of chicken alfredo.' },
+                { icon: 'fas fa-wine-glass-alt', label: 'Wine Pairing', prompt: 'What wine pairs well with chicken alfredo?' }
+            ]
+        };
+
+        const assistantNames = {
+            'professional': 'Pro',
+            'creative': 'Creative',
+            'developer': 'Dev',
+            'teacher': 'Teacher',
+            'trip-planner': 'Trip Planner',
+            'recipes': 'Recipes'
+        };
+
+        // --- Utility Functions ---
+        
+        const saveStateToLocalStorage = () => {
+            try {
+                const state = {
+                    chats,
+                    projects,
+                    userTier,
+                    userName,
+                    userEmail,
+                    userActivity,
+                    favoriteTemplates
+                };
+                localStorage.setItem('aura-ai-state', JSON.stringify(state));
+            } catch (error) {
+                console.error("Failed to save state to local storage:", error);
+            }
+        };
+        
+        const loadStateFromLocalStorage = () => {
+            try {
+                const savedState = localStorage.getItem('aura-ai-state');
+                if (savedState) {
+                    const state = JSON.parse(savedState);
+                    chats = state.chats || { 'professional': {}, 'creative': {}, 'developer': {}, 'teacher': {}, 'trip-planner': {}, 'recipes': {} };
+                    projects = state.projects || {};
+                    userTier = state.userTier || 'free';
+                    userName = state.userName || 'User';
+                    userEmail = state.userEmail || 'aura_user@example.com';
+                    userActivity = state.userActivity || [];
+                    favoriteTemplates = state.favoriteTemplates || [];
+                }
+            } catch (error) {
+                console.error("Failed to load state from local storage:", error);
+                // Reset to default if data is corrupted
+                chats = { 'professional': {}, 'creative': {}, 'developer': {}, 'teacher': {}, 'trip-planner': {}, 'recipes': {} };
+                projects = {};
+                userTier = 'free';
+                userActivity = [];
+                favoriteTemplates = [];
+            }
+        };
+
+        const logActivity = (action) => {
+            userActivity.unshift({ action, timestamp: new Date().toISOString() });
+            if (userActivity.length > 50) { // Keep last 50 activities
+                userActivity.pop();
+            }
+            saveStateToLocalStorage();
+        };
+
+
+        /**
+         * Shows a specific page by its ID and hides others.
+         * @param {HTMLElement} pageToShow The page element to display.
+         */
+        const showPage = (pageToShow) => {
+            [landingPage, authPage, chatApp].forEach(page => {
+                page.style.display = 'none';
+            });
+            pageToShow.style.display = 'flex';
+            if (pageToShow === landingPage) {
+                pageToShow.style.flexDirection = 'column';
+            }
+        };
+
+        const showModal = (modal) => { modal.style.display = 'flex'; };
+        const hideModal = (modal) => { modal.style.display = 'none'; };
+
+        /**
+         * Displays a short, temporary message box.
+         * @param {string} message The message to display.
+         * @param {boolean} isError Whether the message is an error.
+         */
+        const showMessageBox = (message, isError = false) => {
+            messageBoxText.textContent = message;
+            messageBoxIcon.className = isError 
+                ? 'fas fa-exclamation-circle text-red-500 text-xl' 
+                : 'fas fa-check-circle text-green-500 text-xl';
+            messageBox.classList.remove('hidden');
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 3000);
+        };
+        
+        /**
+         * Renders a chat message to the UI.
+         * @param {object} message The message object.
+         */
+        const renderMessage = (message) => {
+            switchToChatView();
+            
+            const { content, sender, type = 'text', id = null, isPinned = false, fileName = null } = message;
+            
+            const messageWrapper = document.createElement('div');
+            messageWrapper.classList.add('flex', 'my-2', 'chat-message', 'flex-col');
+            messageWrapper.id = id;
+
+            if (sender === 'user') {
+                messageWrapper.classList.add('items-end');
+            } else {
+                messageWrapper.classList.add('items-start');
+            }
+
+
+            // NEW: Display file sent indicator above the message
+            if (fileName) {
+                const fileSentIndicator = document.createElement('div');
+                fileSentIndicator.classList.add('text-xs', 'text-text-secondary', 'mb-1', 'px-3', 'flex', 'items-center');
+                fileSentIndicator.innerHTML = `<i class="fas fa-paperclip mr-1"></i> Sent: ${fileName}`;
+                messageWrapper.appendChild(fileSentIndicator);
+            }
+
+            const bubbleWrapper = document.createElement('div');
+            bubbleWrapper.classList.add('flex', 'items-start', 'max-w-[80%]');
+
+            if (sender === 'ai') {
+                const avatar = document.createElement('div');
+                avatar.classList.add('flex-shrink-0', 'w-8', 'h-8', 'rounded-full', 'flex', 'items-center', 'justify-center', 'text-xs', 'font-bold', 'text-white', 'mr-3', 'bg-purple-700');
+                const robotIcon = document.createElement('i');
+                robotIcon.classList.add('fas', 'fa-robot');
+                avatar.appendChild(robotIcon);
+                bubbleWrapper.appendChild(avatar);
+            }
+
+            const bubble = document.createElement('div');
+            bubble.classList.add('chat-bubble', 'relative', sender === 'user' ? 'user-bubble' : 'ai-bubble');
+
+            if (type === 'markdown') {
+                bubble.classList.add('markdown-content');
+                let renderedHtml = md.render(content);
+                // Render LaTeX
+                renderedHtml = renderedHtml.replace(/\$\$([\s\S]*?)\$\$/g, (match, p1) => {
+                    try {
+                        return katex.renderToString(p1, { displayMode: true, throwOnError: false });
+                    } catch (e) { return match; }
+                });
+                renderedHtml = renderedHtml.replace(/\$([\s\S]*?)\$/g, (match, p1) => {
+                    try {
+                        return katex.renderToString(p1, { displayMode: false, throwOnError: false });
+                    } catch (e) { return match; }
+                });
+                bubble.innerHTML = renderedHtml;
+                // Add event listeners to code block buttons
+                bubble.querySelectorAll('.copy-code-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const code = e.target.closest('.markdown-content').querySelector('pre code').innerText;
+                        navigator.clipboard.writeText(code).then(() => showMessageBox('Code copied!'));
+                    });
+                });
+                bubble.querySelectorAll('.open-canvas-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const code = e.target.closest('.markdown-content').querySelector('pre code').innerText;
+                        openCanvas(code);
+                    });
+                });
+            } else {
+                bubble.textContent = content;
+            }
+
+            bubbleWrapper.appendChild(bubble);
+            messageWrapper.appendChild(bubbleWrapper);
+            
+            // Action buttons for BOTH user and AI
+            const actionButtons = document.createElement('div');
+            actionButtons.classList.add('flex', 'items-center', 'mt-2', 'space-x-4', 'text-text-secondary');
+            if (sender === 'ai') {
+                 actionButtons.classList.add('pl-11'); // Align with AI bubble
+            }
+
+            const copyBtn = document.createElement('button');
+            copyBtn.classList.add('hover:text-text-primary', 'text-base');
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+            copyBtn.title = 'Copy';
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(content).then(() => {
+                    showMessageBox('Copied to clipboard!');
+                });
+            });
+            actionButtons.appendChild(copyBtn);
+
+            const pinBtn = document.createElement('button');
+            pinBtn.classList.add('hover:text-text-primary', 'text-base');
+            pinBtn.innerHTML = `<i class="fas fa-thumbtack ${isPinned ? 'text-yellow-400' : ''}"></i>`;
+            pinBtn.title = 'Pin Message';
+            pinBtn.addEventListener('click', () => togglePinnedMessage(id));
+            actionButtons.appendChild(pinBtn);
+            
+            if (sender === 'ai') {
+                const speakBtn = document.createElement('button');
+                speakBtn.classList.add('hover:text-text-primary', 'text-base');
+                speakBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                speakBtn.title = 'Read Aloud';
+                speakBtn.addEventListener('click', () => speakText(content));
+
+                const stopSpeakBtn = document.createElement('button');
+                stopSpeakBtn.classList.add('hover:text-text-primary', 'text-base');
+                stopSpeakBtn.innerHTML = '<i class="fas fa-stop-circle"></i>';
+                stopSpeakBtn.title = 'Stop Reading';
+                stopSpeakBtn.addEventListener('click', () => window.speechSynthesis.cancel());
+
+                actionButtons.appendChild(speakBtn);
+                actionButtons.appendChild(stopSpeakBtn);
+            }
+            
+            // Add Edit button for user messages
+            if (sender === 'user') {
+                const editBtn = document.createElement('button');
+                editBtn.classList.add('hover:text-text-primary', 'text-base');
+                editBtn.innerHTML = '<i class="fas fa-pencil-alt"></i>';
+                editBtn.title = 'Edit & Resend';
+                editBtn.addEventListener('click', () => startEditingMessage(id));
+                actionButtons.appendChild(editBtn);
+            }
+            
+            messageWrapper.appendChild(actionButtons);
+            
+            chatContainer.appendChild(messageWrapper);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        };
+        
+        // IMPROVED: Text-to-speech for long text
+        const speakText = (text) => {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop any previous speech
+                
+                const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+                const selectedVoiceName = localStorage.getItem('aura-ai-voice');
+                const voices = window.speechSynthesis.getVoices();
+                const selectedVoice = voices.find(voice => voice.name === selectedVoiceName);
+
+                sentences.forEach(sentence => {
+                    const utterance = new SpeechSynthesisUtterance(sentence);
+                    if (selectedVoice) {
+                        utterance.voice = selectedVoice;
+                    }
+                    window.speechSynthesis.speak(utterance);
+                });
+
+            } else {
+                showMessageBox("Text-to-speech is not supported in your browser.", true);
+            }
+        };
+        
+        const togglePinnedMessage = (messageId) => {
+            const chat = chats[currentAssistant][activeChatId];
+            const message = chat.messages.find(msg => msg.id === messageId);
+            if (!message) return;
+
+            message.isPinned = !message.isPinned;
+
+            if (message.isPinned) {
+                // Add to pinned if not already there
+                if (!chat.pinned.find(p => p.id === messageId)) {
+                    chat.pinned.push(message);
+                }
+                showMessageBox('Message pinned!');
+                logActivity(`Pinned a message in "${chat.name}"`);
+            } else {
+                chat.pinned = chat.pinned.filter(msg => msg.id !== messageId);
+                showMessageBox('Message unpinned!');
+                logActivity(`Unpinned a message in "${chat.name}"`);
+            }
+            
+            saveStateToLocalStorage();
+            renderChatView(); // Re-render to show pinned status
+        };
+        
+        const formatTimestamp = (timestamp) => {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const yesterday = new Date(now);
+            yesterday.setDate(now.getDate() - 1);
+
+            const isToday = date.toDateString() === now.toDateString();
+            const isYesterday = date.toDateString() === yesterday.toDateString();
+
+            const timeFormat = { hour: '2-digit', minute: '2-digit', hour12: true };
+            const dateFormat = { day: '2-digit', month: '2-digit', year: 'numeric' };
+
+            if (isToday) {
+                return `Today, ${date.toLocaleTimeString([], timeFormat)}`;
+            }
+            if (isYesterday) {
+                return `Yesterday, ${date.toLocaleTimeString([], timeFormat)}`;
+            }
+            return date.toLocaleDateString([], dateFormat);
+        };
+
+        const renderChatHistory = (filter = '') => {
+            chatHistoryList.innerHTML = '';
+            projectsContainer.innerHTML = ''; // Clear projects container
+            
+            // Render Projects
+            Object.values(projects).forEach(project => {
+                const projectElement = createProjectUI(project);
+                projectsContainer.appendChild(projectElement);
+            });
+            
+            // Render regular chat history
+            const currentChatHistory = chats[currentAssistant];
+            if (!currentChatHistory) return;
+
+            const sortedChats = Object.values(currentChatHistory).sort((a, b) => b.lastUsed - a.lastUsed);
+
+            sortedChats.forEach(chat => {
+                // Don't show chats that are in a project
+                const isInProject = Object.values(projects).some(p => p.chatIds.includes(chat.id));
+                if (isInProject) return;
+
+                const chatPassesFilter = filter === '' || 
+                    chat.name.toLowerCase().includes(filter.toLowerCase()) ||
+                    chat.messages.some(msg => msg.content.toLowerCase().includes(filter.toLowerCase()));
+
+                if (!chatPassesFilter) return;
+
+                const item = createChatHistoryItemUI(chat);
+                chatHistoryList.appendChild(item);
+            });
+        };
+        
+        const createChatHistoryItemUI = (chat) => {
+            const item = document.createElement('div');
+            const classList = ['p-2', 'rounded-lg', 'hover:bg-bg-tertiary', 'cursor-pointer', 'transition-colors', 'flex', 'items-center', 'justify-between', 'group'];
+            if (chat.id === activeChatId) {
+                classList.push('bg-bg-tertiary');
+            }
+            item.classList.add(...classList);
+            item.dataset.chatId = chat.id;
+
+            const contentWrapper = document.createElement('div');
+            contentWrapper.classList.add('flex', 'items-center', 'w-full', 'truncate');
+            contentWrapper.addEventListener('click', () => switchChat(chat.id));
+            
+            const avatar = document.createElement('div');
+            avatar.classList.add('w-8', 'h-8', 'rounded-full', 'mr-3', 'flex', 'items-center', 'justify-center', 'text-white', 'text-xs', 'font-bold', 'flex-shrink-0');
+            avatar.innerHTML = `<i class="fas fa-comments"></i>`;
+            avatar.style.backgroundColor = getAssistantColor(currentAssistant);
+
+            const textWrapper = document.createElement('div');
+            textWrapper.classList.add('flex-grow', 'truncate');
+
+            const chatName = document.createElement('div');
+            chatName.textContent = chat.name;
+            chatName.classList.add('text-label', 'truncate', 'font-semibold');
+
+            const timestamp = document.createElement('div');
+            timestamp.textContent = formatTimestamp(chat.lastUsed);
+            timestamp.classList.add('text-label', 'text-xs', 'text-text-secondary', 'mt-1');
+
+            textWrapper.appendChild(chatName);
+            textWrapper.appendChild(timestamp);
+            
+            contentWrapper.appendChild(avatar);
+            contentWrapper.appendChild(textWrapper);
+
+            // NEW: 3-dot menu
+            const menuContainer = document.createElement('div');
+            menuContainer.classList.add('relative');
+
+            const menuBtn = document.createElement('button');
+            menuBtn.innerHTML = '<i class="fas fa-ellipsis-v"></i>';
+            menuBtn.classList.add('text-text-secondary', 'hover:text-text-primary', 'p-2', 'rounded-full', 'flex-shrink-0', 'opacity-0', 'group-hover:opacity-100');
+            menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const existingMenu = e.currentTarget.nextElementSibling;
+                if (existingMenu) {
+                    existingMenu.remove();
+                } else {
+                    document.querySelectorAll('.chat-options-menu').forEach(m => m.remove()); // Close other menus
+                    const dropdown = createChatOptionsMenu(chat.id);
+                    menuContainer.appendChild(dropdown);
+                }
+            });
+
+            menuContainer.appendChild(menuBtn);
+            item.appendChild(contentWrapper);
+            item.appendChild(menuContainer);
+
+            return item;
+        };
+
+        const createChatOptionsMenu = (chatId) => {
+            const menu = document.createElement('div');
+            menu.classList.add('chat-options-menu', 'absolute', 'right-0', 'top-full', 'mt-1', 'w-40', 'bg-bg-primary', 'rounded-lg', 'shadow-lg', 'p-2', 'z-20');
+            
+            const moveToProjectBtn = document.createElement('button');
+            moveToProjectBtn.innerHTML = '<i class="fas fa-folder-plus mr-2"></i> Move to Project';
+            moveToProjectBtn.classList.add('w-full', 'text-left', 'p-2', 'rounded-lg', 'hover:bg-bg-tertiary', 'text-sm');
+            moveToProjectBtn.onclick = (e) => {
+                e.stopPropagation();
+                openMoveToProjectModal(chatId);
+                menu.remove();
+            };
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = '<i class="fas fa-trash-alt mr-2"></i> Delete';
+            deleteBtn.classList.add('w-full', 'text-left', 'p-2', 'rounded-lg', 'hover:bg-bg-tertiary', 'text-red-500', 'text-sm');
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                deleteChat(chatId, currentAssistant);
+                menu.remove();
+            };
+
+            menu.appendChild(moveToProjectBtn);
+            menu.appendChild(deleteBtn);
+            return menu;
+        };
+        
+        const getAssistantColor = (assistant) => {
+            switch(assistant) {
+                case 'professional': return '#8e44ad';
+                case 'creative': return '#e67e22';
+                case 'developer': return '#3498db';
+                case 'teacher': return '#27ae60';
+                default: return '#5a5a5a';
+            }
+        };
+
+        const switchChat = (chatId) => {
+            activeChatId = chatId;
+            if(chats[currentAssistant][activeChatId]) {
+                chats[currentAssistant][activeChatId].lastUsed = Date.now();
+            }
+            renderChatView();
+            renderChatHistory();
+            saveStateToLocalStorage();
+            logActivity(`Switched to chat: "${chats[currentAssistant][activeChatId].name}"`);
+        };
+        
+        const switchAssistant = (assistant) => {
+            currentAssistant = assistant;
+            assistantNameDisplay.textContent = `AURA AI - ${assistantNames[assistant]}`;
+            
+            if (!chats[currentAssistant]) {
+                chats[currentAssistant] = {};
+            }
+
+            if (Object.keys(chats[currentAssistant]).length === 0) {
+                createNewChat();
+            } else {
+                const mostRecentChat = Object.values(chats[currentAssistant]).sort((a, b) => b.lastUsed - a.lastUsed)[0];
+                activeChatId = mostRecentChat.id;
+            }
+            
+            renderChatView();
+            renderChatHistory();
+            renderToolsPanel();
+            logActivity(`Switched to ${assistantNames[assistant]} assistant`);
+        };
+
+        const renderChatView = () => {
+            chatContainer.innerHTML = '';
+            const chat = chats[currentAssistant][activeChatId];
+            if (!chat) {
+                switchToChatView(true); // show welcome
+                return;
+            };
+
+            if (chat.messages.length === 0) {
+                switchToChatView(true); // show welcome
+            } else {
+                switchToChatView();
+                if (chat.pinned && chat.pinned.length > 0) {
+                    const pinnedHeader = document.createElement('div');
+                    pinnedHeader.classList.add('text-center', 'text-text-secondary', 'font-semibold', 'my-4', 'p-2', 'rounded-lg', 'glass-effect', 'text-sm');
+                    pinnedHeader.innerHTML = '<i class="fas fa-thumbtack mr-1"></i> Pinned Messages';
+                    chatContainer.appendChild(pinnedHeader);
+                    chat.pinned.forEach(msg => renderMessage(msg));
+                    const divider = document.createElement('div');
+                    divider.classList.add('w-full', 'h-px', 'bg-bg-tertiary', 'my-4');
+                    chatContainer.appendChild(divider);
+                }
+
+                chat.messages.forEach(msg => {
+                    renderMessage(msg);
+                });
+            }
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        };
+
+        const renderToolsPanel = () => {
+            quickPromptsMenu.innerHTML = '';
+            let tools = assistantTools[currentAssistant] || [];
+            
+            tools.forEach(tool => {
+                const button = document.createElement('button');
+                button.classList.add('tool-btn', 'w-full', 'p-3', 'rounded-lg', 'text-text-primary', 'flex', 'flex-col', 'items-center', 'space-y-1', 'text-sm');
+                
+                let iconHtml = `<i class="${tool.icon} text-xl mb-1 text-accent-primary"></i>`;
+                
+                button.innerHTML = `${iconHtml} <span class="font-semibold">${tool.label}</span>`;
+                button.addEventListener('click', () => {
+                    userInput.value = tool.prompt;
+                    userInput.focus();
+                    quickPromptsMenu.classList.add('hidden');
+                });
+                quickPromptsMenu.appendChild(button);
+            });
+        };
+        
+        const showLoadingIndicator = (text = '') => {
+            const loaderId = 'loading-indicator';
+            if (document.getElementById(loaderId)) return; // Already showing
+
+            const loaderWrapper = document.createElement('div');
+            loaderWrapper.id = loaderId;
+            loaderWrapper.classList.add('flex', 'my-4', 'chat-message', 'justify-start');
+            
+            const avatar = document.createElement('div');
+            avatar.classList.add('flex-shrink-0', 'w-8', 'h-8', 'rounded-full', 'flex', 'items-center', 'justify-center', 'text-xs', 'font-bold', 'text-white', 'mr-3', 'bg-purple-700');
+            avatar.innerHTML = '<i class="fas fa-robot"></i>';
+            
+            const bubble = document.createElement('div');
+            bubble.classList.add('chat-bubble', 'ai-bubble', 'max-w-[70%]', 'flex', 'items-center', 'justify-center', 'p-4');
+            
+            bubble.innerHTML = `
+                <div class="loader mr-2">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <span id="loading-text">${text}</span>
+            `;
+            
+            loaderWrapper.appendChild(avatar);
+            loaderWrapper.appendChild(bubble);
+            chatContainer.appendChild(loaderWrapper);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        };
+
+        const hideLoadingIndicator = () => {
+            const loader = document.getElementById('loading-indicator');
+            if (loader) {
+                loader.remove();
+            }
+        };
+        
+        /**
+         * Sends a message to the Gemini API and gets a response.
+         * @param {string} userMessage The user's message.
+         * @param {string} apiKey The API key to use.
+         */
+        const getGeminiResponse = async (userMessage, apiKey = API_KEY) => {
+            setSendButtonState('stop');
+            
+            if (!apiKey) {
+                hideLoadingIndicator();
+                showMessageBox("API Key not set. Please add your Gemini API key in the script.", true);
+                typeAndRenderMarkdown("I'm sorry, but my connection to the Gemini API is not configured. Please ask the developer to add an API key.");
+                setSendButtonState('send');
+                return Promise.reject("API Key not set");
+            }
+            
+            abortController = new AbortController();
+            const signal = abortController.signal;
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+            const payload = { contents: [{ parts: [{ text: userMessage }] }] };
+            
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    signal: signal
+                });
+                
+                hideLoadingIndicator();
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API request failed with status ${response.status}: ${errorData.error?.message || 'Unknown error'}`);
+                }
+
+                const data = await response.json();
+                const aiResponse = data.candidates[0].content.parts[0].text;
+                return aiResponse;
+
+            } catch (error) {
+                hideLoadingIndicator();
+                if (error.name === 'AbortError') {
+                    console.log('Fetch aborted by user.');
+                    typeAndRenderMarkdown('Response generation stopped by user.');
+                } else {
+                    console.error('Error fetching from Gemini API:', error);
+                    showMessageBox(`Error: ${error.message}`, true);
+                    typeAndRenderMarkdown(`I'm having trouble connecting to my brain. Please try again later.`);
+                }
+                return Promise.reject(error);
+            } finally {
+                setSendButtonState('send');
+                abortController = null;
+            }
+        };
+        
+        const typeAndRenderMarkdown = (rawText) => {
+            const messageId = `msg-${Date.now()}`;
+            
+            const chat = chats[currentAssistant][activeChatId];
+            if (chat) {
+                const newMessage = {
+                    id: messageId,
+                    content: rawText,
+                    sender: 'ai',
+                    type: 'markdown',
+                    isPinned: false
+                };
+                chat.messages.push(newMessage);
+                renderMessage(newMessage); // Render immediately
+                saveStateToLocalStorage();
+            }
+            
+            speakText(rawText);
+        };
+
+        const createNewChat = () => {
+            const newChatId = `chat-${Date.now()}`;
+            chats[currentAssistant][newChatId] = { id: newChatId, name: 'New Chat', messages: [], pinned: [], lastUsed: Date.now() };
+            switchChat(newChatId);
+            logActivity(`Created a new chat in ${assistantNames[currentAssistant]}`);
+        };
+
+        const populateVoiceList = () => {
+            if (typeof speechSynthesis === 'undefined') {
+                return;
+            }
+            const voices = speechSynthesis.getVoices();
+            voiceSelect.innerHTML = '';
+            voices.forEach(voice => {
+                const option = document.createElement('option');
+                option.textContent = `${voice.name} (${voice.lang})`;
+                option.value = voice.name;
+                option.setAttribute('data-lang', voice.lang);
+                voiceSelect.appendChild(option);
+            });
+            
+            const savedVoice = localStorage.getItem('aura-ai-voice');
+            if(savedVoice) {
+                voiceSelect.value = savedVoice;
+            }
+        };
+        
+        const setSendButtonState = (state) => {
+            if (state === 'stop') {
+                sendBtn.innerHTML = '<i class="fas fa-stop"></i>';
+                sendBtn.classList.remove('bg-accent-primary');
+                sendBtn.classList.add('bg-red-500');
+            } else {
+                sendBtn.innerHTML = '<i class="fas fa-arrow-right"></i>';
+                sendBtn.classList.add('bg-accent-primary');
+                sendBtn.classList.remove('bg-red-500');
+            }
+        };
+
+        const updateUserTierUI = () => {
+            if (userTier === 'premium') {
+                userTierBadge.textContent = 'Premium';
+                userTierBadge.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-yellow-500 text-black';
+                upgradeBtn.innerHTML = `<i class="fas fa-check-circle text-green-500"></i> <span class="text-sm font-semibold">Premium Active</span>`;
+                upgradeBtn.disabled = true;
+                mainChatHeader.classList.add('premium-header');
+                assistantNameDisplay.classList.add('premium-gradient-text');
+            } else {
+                userTierBadge.textContent = 'Free Tier';
+                userTierBadge.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-gray-600 text-white';
+                upgradeBtn.innerHTML = `<i class="fas fa-rocket text-green-500"></i> <span class="text-sm font-semibold">Upgrade</span>`;
+                upgradeBtn.disabled = false;
+                mainChatHeader.classList.remove('premium-header');
+                assistantNameDisplay.classList.remove('premium-gradient-text');
+            }
+            renderToolsPanel(); // Re-render tools to show/hide premium ones
+        };
+
+        const renderDataControlModal = () => {
+            const dataControlList = document.getElementById('data-control-list');
+            dataControlList.innerHTML = '';
+            
+            Object.keys(chats).forEach(assistant => {
+                const assistantChats = Object.values(chats[assistant]);
+                if (assistantChats.length > 0) {
+                    const assistantHeader = document.createElement('h4');
+                    assistantHeader.className = 'text-lg font-semibold mt-4 first:mt-0 text-accent-secondary';
+                    assistantHeader.textContent = assistantNames[assistant];
+                    dataControlList.appendChild(assistantHeader);
+
+                    assistantChats.forEach(chat => {
+                        const item = document.createElement('div');
+                        item.className = 'flex items-center justify-between p-2 rounded-lg hover:bg-bg-tertiary';
+                        
+                        const chatName = document.createElement('span');
+                        chatName.textContent = chat.name;
+                        chatName.className = 'truncate';
+
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                        deleteBtn.className = 'text-red-500 hover:text-red-400 p-2 rounded-full';
+                        deleteBtn.title = 'Delete Chat';
+                        deleteBtn.addEventListener('click', () => deleteChat(chat.id, assistant));
+
+                        item.appendChild(chatName);
+                        item.appendChild(deleteBtn);
+                        dataControlList.appendChild(item);
+                    });
+                }
+            });
+        };
+
+        const deleteChat = (chatId, assistant) => {
+            if (chats[assistant] && chats[assistant][chatId]) {
+                const chatName = chats[assistant][chatId].name;
+                delete chats[assistant][chatId];
+                
+                // Also remove from any project it might be in
+                Object.values(projects).forEach(project => {
+                    project.chatIds = project.chatIds.filter(id => id !== chatId);
+                });
+                
+                saveStateToLocalStorage();
+                
+                // If the deleted chat was the active one, switch to another or create new
+                if (activeChatId === chatId) {
+                    const remainingChats = Object.keys(chats[currentAssistant]);
+                    if (remainingChats.length > 0) {
+                        switchChat(remainingChats[0]);
+                    } else {
+                        createNewChat();
+                    }
+                }
+                
+                renderChatHistory();
+                renderDataControlModal();
+                showMessageBox('Chat deleted successfully.');
+                logActivity(`Deleted chat: "${chatName}"`);
+            }
+        };
+        
+        // --- NEW: Projects Functions ---
+        const renderProjectsList = () => {
+            projectsListContainer.innerHTML = '';
+            if (Object.keys(projects).length === 0) {
+                projectsListContainer.innerHTML = '<p class="text-text-secondary text-center">No project folders created yet.</p>';
+                return;
+            }
+            Object.values(projects).forEach(project => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between p-2 rounded-lg bg-bg-secondary';
+                
+                const projectName = document.createElement('span');
+                projectName.textContent = project.name;
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                deleteBtn.className = 'text-red-500 hover:text-red-400 p-2 rounded-full';
+                deleteBtn.onclick = () => deleteProject(project.id);
+                
+                item.appendChild(projectName);
+                item.appendChild(deleteBtn);
+                projectsListContainer.appendChild(item);
+            });
+        };
+
+        const createProject = (name) => {
+            const projectId = `proj-${Date.now()}`;
+            projects[projectId] = { id: projectId, name, chatIds: [] };
+            saveStateToLocalStorage();
+            renderProjectsList();
+            renderChatHistory();
+            logActivity(`Created project: "${name}"`);
+        };
+
+        const deleteProject = (projectId) => {
+            const projectName = projects[projectId].name;
+            delete projects[projectId];
+            saveStateToLocalStorage();
+            renderProjectsList();
+            renderChatHistory();
+            showMessageBox('Project folder deleted.');
+            logActivity(`Deleted project: "${projectName}"`);
+        };
+
+        const openMoveToProjectModal = (chatId) => {
+            chatToMove = chatId;
+            const list = document.getElementById('move-to-project-list');
+            list.innerHTML = '';
+            if (Object.keys(projects).length === 0) {
+                list.innerHTML = '<p class="text-text-secondary text-center">Create a project folder first.</p>';
+            } else {
+                Object.values(projects).forEach(project => {
+                    const btn = document.createElement('button');
+                    btn.className = 'w-full text-left p-3 rounded-lg bg-bg-secondary hover:bg-bg-tertiary';
+                    btn.innerHTML = `<i class="fas fa-folder mr-2"></i> ${project.name}`;
+                    btn.onclick = () => moveChatToProject(project.id);
+                    list.appendChild(btn);
+                });
+            }
+            showModal(moveToProjectModal);
+        };
+
+        const moveChatToProject = (projectId) => {
+            if (chatToMove && projects[projectId]) {
+                // Remove from other projects first
+                Object.values(projects).forEach(p => {
+                    p.chatIds = p.chatIds.filter(id => id !== chatToMove);
+                });
+                
+                projects[projectId].chatIds.push(chatToMove);
+                saveStateToLocalStorage();
+                renderChatHistory();
+                hideModal(moveToProjectModal);
+                showMessageBox('Chat moved to project.');
+                logActivity(`Moved chat to project "${projects[projectId].name}"`);
+            }
+        };
+
+        const createProjectUI = (project) => {
+            const container = document.createElement('div');
+            
+            const header = document.createElement('button');
+            header.className = 'w-full flex items-center justify-between text-sm font-semibold text-text-secondary mb-2 text-label p-2 rounded-lg hover:bg-bg-tertiary';
+            header.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-folder mr-2"></i> ${project.name}
+                </div>
+                <i class="fas fa-chevron-down transform transition-transform"></i>
+            `;
+            
+            const content = document.createElement('div');
+            content.className = 'pl-4 space-y-2 accordion-content';
+            
+            project.chatIds.forEach(chatId => {
+                const chat = chats[currentAssistant][chatId];
+                if (chat) {
+                    const chatItem = createChatHistoryItemUI(chat);
+                    content.appendChild(chatItem);
+                }
+            });
+
+            header.onclick = () => {
+                const icon = header.querySelector('.fa-chevron-down');
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    icon.classList.remove('rotate-180');
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    icon.classList.add('rotate-180');
+                }
+            };
+
+            container.appendChild(header);
+            container.appendChild(content);
+            return container;
+        };
+        
+        // --- NEW: CAPTCHA Functions ---
+        const generateCaptcha = () => {
+            const canvas = document.getElementById('captcha-canvas');
+            const ctx = canvas.getContext('2d');
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            captchaText = '';
+            for (let i = 0; i < 6; i++) {
+                captchaText += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Use theme colors for CAPTCHA
+            const bgColor = getComputedStyle(document.body).getPropertyValue('--bg-secondary');
+            const textColor = getComputedStyle(document.body).getPropertyValue('--text-primary');
+            const accentColor = getComputedStyle(document.body).getPropertyValue('--accent-primary');
+
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw text
+            ctx.font = '30px Inter';
+            ctx.fillStyle = textColor;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(captchaText, canvas.width / 2, canvas.height / 2);
+
+            // Add some noise lines
+            for (let i = 0; i < 3; i++) {
+                ctx.strokeStyle = accentColor;
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.stroke();
+            }
+        };
+
+        // --- NEW: Canvas Functions ---
+        const openCanvas = (code) => {
+            canvasCodeArea.value = code;
+            canvasOutput.textContent = ''; // Clear previous output
+            showModal(canvasModal);
+        };
+
+        const runCodeInCanvas = () => {
+            const code = canvasCodeArea.value;
+            canvasOutput.textContent = ''; // Clear output
+            const oldLog = console.log;
+            console.log = function (message) {
+                if (typeof message == 'object') {
+                    canvasOutput.textContent += (JSON && JSON.stringify ? JSON.stringify(message) : String(message)) + '\n';
+                } else {
+                    canvasOutput.textContent += message + '\n';
+                }
+            };
+            try {
+                new Function(code)();
+            } catch (e) {
+                canvasOutput.textContent = `Error: ${e.message}`;
+            } finally {
+                console.log = oldLog; // Restore original console.log
+            }
+        };
+        
+        // --- NEW: Edit Message Functions ---
+        const startEditingMessage = (messageId) => {
+            const messageWrapper = document.getElementById(messageId);
+            if (!messageWrapper) return;
+
+            const chat = chats[currentAssistant][activeChatId];
+            const message = chat.messages.find(msg => msg.id === messageId);
+            if (!message) return;
+
+            const bubble = messageWrapper.querySelector('.chat-bubble');
+            const originalContent = message.content;
+            
+            bubble.innerHTML = `
+                <textarea class="w-full bg-bg-tertiary text-text-primary p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary" rows="3">${originalContent}</textarea>
+                <div class="flex justify-end space-x-2 mt-2">
+                    <button class="cancel-edit-btn text-sm py-1 px-3 rounded-lg hover:bg-bg-tertiary">Cancel</button>
+                    <button class="save-edit-btn text-sm py-1 px-3 rounded-lg bg-green-600 text-white hover:bg-green-700">Save & Resend</button>
+                </div>
+            `;
+            
+            bubble.querySelector('.cancel-edit-btn').onclick = () => {
+                // Re-render the original message
+                renderChatView();
+            };
+            
+            bubble.querySelector('.save-edit-btn').onclick = () => {
+                const newContent = bubble.querySelector('textarea').value;
+                saveAndResendMessage(messageId, newContent);
+            };
+        };
+
+        const saveAndResendMessage = (messageId, newContent) => {
+            const chat = chats[currentAssistant][activeChatId];
+            const messageIndex = chat.messages.findIndex(msg => msg.id === messageId);
+            
+            if (messageIndex > -1) {
+                // Update the message content
+                chat.messages[messageIndex].content = newContent;
+
+                // Remove all subsequent messages (old AI responses)
+                chat.messages.splice(messageIndex + 1);
+
+                saveStateToLocalStorage();
+                renderChatView(); // Re-render to show the edited message and remove old responses
+                showMessageBox("Message updated! Getting new response...");
+                logActivity(`Edited and resent a message in "${chat.name}"`);
+
+                // Resend the message to the AI
+                resendMessageForNewResponse(newContent);
+            }
+        };
+        
+        const resendMessageForNewResponse = async (userMessage) => {
+            showLoadingIndicator();
+            try {
+                const aiResponse = await getGeminiResponse(userMessage);
+                typeAndRenderMarkdown(aiResponse);
+            } catch (error) {
+                console.error("Message resending failed:", error);
+            }
+        };
+
+        // --- NEW: Templates Functions ---
+        const searchGoogleTemplates = async (query) => {
+            templateResultsContainer.innerHTML = `<div class="col-span-full text-center"><div class="loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><p>Searching for templates...</p></div>`;
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Mock results based on query
+            const mockResults = getMockTemplates(query);
+            
+            renderCanvaLikeTemplateResults(mockResults);
+            logActivity(`Searched for templates: "${query}"`);
+        };
+
+        const getMockTemplates = (query) => {
+            const q = query.toLowerCase();
+            if (q.includes('birthday')) {
+                return [
+                    { id: `bday-1`, title: `Modern Birthday Invite`, htmlContent: `<div style="text-align: center; font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; border-radius: 15px; color: white;"><h1 style="font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 1rem;">You're Invited!</h1><p style="font-size: 1.2rem; margin-bottom: 2rem;">Join us to celebrate</p><h2 style="font-family: 'Lobster', cursive; font-size: 2.5rem; margin-bottom: 2rem;">[Name]'s Birthday!</h2><p><strong>Date:</strong> [Date]</p><p><strong>Time:</strong> [Time]</p><p><strong>Location:</strong> [Address]</p></div>` },
+                    { id: `bday-2`, title: `Elegant Birthday Party`, htmlContent: `<div style="text-align: center; font-family: 'Roboto Slab', serif; background-color: #f7fafc; border: 1px solid #e2e8f0; padding: 40px 20px; border-radius: 10px; color: #2d3748;"><h2 style="font-size: 2rem; border-bottom: 2px solid #a0aec0; padding-bottom: 0.5rem; margin-bottom: 2rem;">A Celebration of Life</h2><p>We joyfully invite you to the birthday celebration of</p><h1 style="font-family: 'Playfair Display', serif; font-size: 3rem; color: #8e44ad; margin: 1rem 0;">[Name]</h1><p>[Date] at [Time]</p><p>[Venue Name]</p><p>[Address]</p></div>` },
+                    { id: `bday-3`, title: `Kids Fun Birthday`, htmlContent: `<div style="text-align: center; font-family: 'Poppins', sans-serif; background: #fffbeb; border: 3px dashed #f59e0b; padding: 40px; border-radius: 20px; color: #d97706;"><h1 style="font-size: 3rem; font-weight: bold; color: #ef4444;">It's Party Time!</h1><p style="font-size: 1.5rem;">Let's celebrate</p><h2 style="font-size: 2.5rem; color: #3b82f6;">[Child's Name]'s [Age]th Birthday!</h2><p>Join us for fun, games, and cake!</p><p>[Date] & [Time]</p><p>[Location]</p></div>` },
+                    { id: `bday-4`, title: `Minimalist Bday Invite`, htmlContent: `<div style="font-family: 'Inter', sans-serif; padding: 40px; background: #1a1a1a; color: #f0f0f0; text-align: center;"><p style="letter-spacing: 3px; text-transform: uppercase;">Party</p><h1 style="font-size: 4rem; font-weight: 800; margin: 0;">[Name]</h1><p style="font-size: 1.5rem; margin-bottom: 2rem;">is turning [Age]</p><p>[Date] | [Time]</p><p>[Location]</p></div>` }
+                ];
+            }
+            // Default generic templates
+            return [
+                { id: `gen-1`, title: `Professional ${query}`, htmlContent: `<div style="font-family: 'Inter', sans-serif; padding: 20px;"><h1 style="font-size: 2rem; border-bottom: 1px solid #ccc; padding-bottom: 10px;">${query} Document</h1><p>This is a placeholder for your ${query} content. Start editing to add your details.</p></div>`},
+                { id: `gen-2`, title: `Creative ${query}`, htmlContent: `<div style="font-family: 'Poppins', sans-serif; text-align: center; padding: 20px;"><h1 style="font-family: 'Lobster', cursive; font-size: 3rem; color: #8e44ad;">${query}</h1><p>Unleash your creativity! This template is perfect for a stylish ${query}.</p></div>`},
+            ];
+        };
+
+        const renderCanvaLikeTemplateResults = (results) => {
+            templateResultsContainer.innerHTML = "";
+             if (results.length === 0) {
+                templateResultsContainer.innerHTML = `<p class="col-span-full text-center">No templates found.</p>`;
+                return;
+            }
+
+            results.forEach((template) => {
+                const isFavorited = favoriteTemplates.some(fav => fav.id === template.id);
+                const card = document.createElement('div');
+                card.className = 'template-card rounded-lg flex flex-col overflow-hidden';
+                
+                const preview = document.createElement('div');
+                preview.className = 'template-preview';
+                preview.innerHTML = template.htmlContent;
+
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'p-3 bg-bg-secondary flex items-center justify-between';
+                infoDiv.innerHTML = `
+                    <h5 class="font-semibold text-sm truncate">${template.title}</h5>
+                    <button class="favorite-template-btn text-text-secondary hover:text-yellow-400">
+                        <i class="${isFavorited ? 'fas' : 'far'} fa-star"></i>
+                    </button>
+                `;
+                
+                card.appendChild(preview);
+                card.appendChild(infoDiv);
+                templateResultsContainer.appendChild(card);
+
+                card.addEventListener('click', () => openTemplateEditor(template));
+                
+                infoDiv.querySelector('.favorite-template-btn').onclick = (e) => {
+                    e.stopPropagation();
+                    toggleFavoriteTemplate(template, e.currentTarget);
+                };
+            });
+        };
+
+        const toggleFavoriteTemplate = (template, btn) => {
+            const index = favoriteTemplates.findIndex(fav => fav.id === template.id);
+            if (index > -1) {
+                favoriteTemplates.splice(index, 1);
+                btn.innerHTML = `<i class="far fa-star"></i>`;
+                showMessageBox("Removed from favorites.");
+                logActivity(`Unfavorited template: "${template.title}"`);
+            } else {
+                favoriteTemplates.push(template);
+                btn.innerHTML = `<i class="fas fa-star text-yellow-400"></i>`;
+                showMessageBox("Added to favorites!");
+                logActivity(`Favorited template: "${template.title}"`);
+            }
+            saveStateToLocalStorage();
+        };
+        
+        const openTemplateEditor = (template) => {
+            currentEditingTemplate = template;
+            templateEditorContent.innerHTML = template.htmlContent;
+            showModal(templateEditorModal);
+        };
+        
+        const setupToolbar = () => {
+            templateEditorToolbar.querySelectorAll('button[data-command], select[data-command]').forEach(element => {
+                element.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const command = element.dataset.command;
+                    const value = element.value || null;
+                    document.execCommand(command, false, value);
+                    templateEditorContent.focus();
+
+                    // Toggle active state for buttons
+                    if(element.tagName === 'BUTTON') {
+                       const isActive = document.queryCommandState(command);
+                       element.classList.toggle('active', isActive);
+                    }
+                });
+            });
+
+             templateEditorToolbar.querySelectorAll('input[data-command]').forEach(element => {
+                element.addEventListener('input', (e) => {
+                    const command = element.dataset.command;
+                    const value = element.value || null;
+                    document.execCommand(command, false, value);
+                });
+            });
+
+            templateEditorContent.addEventListener('keyup', updateToolbarState);
+            templateEditorContent.addEventListener('mouseup', updateToolbarState);
+        };
+
+        const updateToolbarState = () => {
+            templateEditorToolbar.querySelectorAll('button[data-command]').forEach(button => {
+                const command = button.dataset.command;
+                const isActive = document.queryCommandState(command);
+                button.classList.toggle('active', isActive);
+            });
+        };
+
+        const downloadTemplateAsImage = () => {
+            // In a real scenario, you'd use a library like html2canvas
+            showMessageBox("Downloading as image... (Simulation)");
+            const content = templateEditorContent.innerHTML;
+            const title = currentEditingTemplate ? currentEditingTemplate.title : "template";
+            logActivity(`Downloaded template: "${title}"`);
+        };
+
+
+        const switchToChatView = (showWelcome = false) => {
+            templatesView.style.display = 'none';
+            if (showWelcome) {
+                chatWelcomeScreen.style.display = 'flex';
+                chatContainer.style.display = 'none';
+            } else {
+                chatWelcomeScreen.style.display = 'none';
+                chatContainer.style.display = 'block';
+            }
+        };
+
+        const switchToTemplatesView = (isFavorites = false) => {
+            chatWelcomeScreen.style.display = 'none';
+            chatContainer.style.display = 'none';
+            templatesView.style.display = 'flex';
+            if (isFavorites) {
+                templatesView.querySelector('h2').textContent = "Favorite Templates";
+                templateSearchInput.classList.add('hidden');
+                renderCanvaLikeTemplateResults(favoriteTemplates);
+            } else {
+                templatesView.querySelector('h2').textContent = "Explore Templates";
+                templateSearchInput.classList.remove('hidden');
+                templateResultsContainer.innerHTML = '<p class="col-span-full text-center">Search for templates to get started.</p>';
+            }
+        };
+
+        const switchToActivityView = () => {
+            chatWelcomeScreen.style.display = 'none';
+            chatContainer.style.display = 'none';
+            templatesView.style.display = 'flex';
+            templatesView.querySelector('h2').textContent = "Your Activity";
+            templateSearchInput.classList.add('hidden');
+            
+            templateResultsContainer.innerHTML = "";
+            if (userActivity.length === 0) {
+                templateResultsContainer.innerHTML = `<p class="col-span-full text-center">No activity yet.</p>`;
+                return;
+            }
+            const activityList = document.createElement('div');
+            activityList.className = "col-span-full space-y-2";
+            userActivity.forEach(item => {
+                const activityItem = document.createElement('div');
+                activityItem.className = "p-2 bg-bg-secondary rounded-lg text-sm";
+                activityItem.innerHTML = `<span class="text-text-secondary">${new Date(item.timestamp).toLocaleString()}:</span> ${item.action}`;
+                activityList.appendChild(activityItem);
+            });
+            templateResultsContainer.appendChild(activityList);
+        };
+
+        // --- Event Listeners ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStateFromLocalStorage();
+            updateUserTierUI(); // Update UI based on loaded tier
+            setupToolbar(); // NEW: Initialize the editor toolbar
+            
+            const savedTheme = localStorage.getItem('aura-ai-theme') || 'dark';
+            document.body.className = `antialiased ${savedTheme}-theme`;
+            
+            loginNavBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage(authPage);
+                toggleAuthView(true);
+            });
+
+            signupNavBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage(authPage);
+                toggleAuthView(false);
+            });
+            
+            landingStartBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage(authPage);
+                toggleAuthView(false);
+            });
+
+            virtualAiBtn.addEventListener('click', () => showModal(virtualAiModal));
+            closeVirtualAiModal.addEventListener('click', () => hideModal(virtualAiModal));
+
+            feedbackIcon.addEventListener('click', () => showModal(feedbackModal));
+            closeFeedbackModal.addEventListener('click', () => hideModal(feedbackModal));
+            settingsBtn.addEventListener('click', () => showModal(settingsModal));
+            closeSettingsModal.addEventListener('click', () => hideModal(settingsModal));
+            dataControlBtn.addEventListener('click', () => {
+                renderDataControlModal();
+                showModal(dataControlModal);
+            });
+            closeDataControlModal.addEventListener('click', () => hideModal(dataControlModal));
+            fileUploadBtn.addEventListener('click', () => showModal(fileUploadModal));
+            closeFileUploadModal.addEventListener('click', () => hideModal(fileUploadModal));
+            upgradeBtn.addEventListener('click', () => {
+                if (userTier !== 'premium') {
+                    showModal(paymentModal);
+                }
+            });
+            closePaymentModal.addEventListener('click', () => hideModal(paymentModal));
+            closeCanvasModal.addEventListener('click', () => hideModal(canvasModal));
+            closeTemplateEditorBtn.addEventListener('click', () => hideModal(templateEditorModal));
+            projectsBtn.addEventListener('click', () => {
+                renderProjectsList();
+                showModal(projectsModal);
+            });
+            closeProjectsModal.addEventListener('click', () => hideModal(projectsModal));
+            closeMoveToProjectModal.addEventListener('click', () => hideModal(moveToProjectModal));
+
+
+            landingFaqBtn.addEventListener('click', () => showModal(faqModal));
+            landingAboutBtn.addEventListener('click', () => showModal(aboutModal));
+            landingContactBtn.addEventListener('click', () => showModal(contactModal));
+            document.querySelectorAll('.close-modal-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    hideModal(e.target.closest('.modal'));
+                });
+            });
+
+            const toggleSidebar = () => {
+                isSidebarCollapsed = !isSidebarCollapsed;
+                sidebar.classList.toggle('sidebar-collapsed', isSidebarCollapsed);
+                collapseBtnInner.querySelector('i').classList.toggle('fa-chevron-left', !isSidebarCollapsed);
+                collapseBtnInner.querySelector('i').classList.toggle('fa-bars', isSidebarCollapsed);
+                collapseBtnOuter.querySelector('i').classList.toggle('fa-chevron-right', !isSidebarCollapsed);
+                collapseBtnOuter.querySelector('i').classList.toggle('fa-bars', isSidebarCollapsed);
+            };
+
+            collapseBtnOuter.addEventListener('click', toggleSidebar);
+            collapseBtnInner.addEventListener('click', toggleSidebar);
+
+            newChatBtn.addEventListener('click', createNewChat);
+
+            exportChatBtn.addEventListener('click', () => {
+                const chat = chats[currentAssistant][activeChatId];
+                if (!chat || chat.messages.length === 0) {
+                    showMessageBox('No chat to export!', true);
+                    return;
+                }
+                
+                let textContent = `AURA AI Chat Export - ${chat.name}\n\n`;
+                chat.messages.forEach(msg => {
+                    textContent += `${msg.sender.toUpperCase()}: ${msg.content}\n\n`;
+                });
+                
+                const blob = new Blob([textContent], { type: 'text/plain' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `aura-chat-${chat.id}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                showMessageBox('Chat exported!');
+                logActivity(`Exported chat: "${chat.name}"`);
+            });
+            
+            themeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const theme = btn.dataset.theme;
+                    document.body.className = `antialiased ${theme}-theme`;
+                    localStorage.setItem('aura-ai-theme', theme);
+                    logActivity(`Changed theme to ${theme}`);
+                });
+            });
+            
+            voiceSelect.addEventListener('change', (e) => {
+                localStorage.setItem('aura-ai-voice', e.target.value);
+            });
+
+            if (recognition) {
+                voiceInputBtn.addEventListener('click', () => {
+                    voiceInputBtn.innerHTML = '<i class="fas fa-microphone-slash text-red-500 animate-pulse"></i>';
+                    recognition.start();
+                    showMessageBox('Listening...');
+                });
+                
+                recognition.addEventListener('result', (e) => {
+                    const transcript = Array.from(e.results)
+                        .map(result => result[0])
+                        .map(result => result.transcript)
+                        .join('');
+                    userInput.value = transcript;
+                });
+                
+                recognition.addEventListener('end', () => {
+                    voiceInputBtn.innerHTML = '<i class="fas fa-microphone text-xl"></i>';
+                    if (userInput.value.trim() !== '') {
+                        sendMessage();
+                    }
+                });
+
+                recognition.addEventListener('error', (e) => {
+                    console.error('Speech recognition error:', e.error);
+                    showMessageBox(`Voice recognition error: ${e.error}`, true);
+                });
+            } else {
+                 voiceInputBtn.style.display = 'none';
+            }
+
+            const sendMessage = async () => {
+                let userMessage = userInput.value.trim();
+                if (userMessage === '' && !uploadedFileContent) return;
+
+                const messageId = `msg-${Date.now()}`;
+                let chat = chats[currentAssistant][activeChatId];
+
+                if (!chat) {
+                    createNewChat();
+                    chat = chats[currentAssistant][activeChatId];
+                }
+                
+                if (chat.name === 'New Chat' && userMessage !== '') {
+                    chat.name = userMessage.substring(0, 30) + (userMessage.length > 30 ? '...' : '');
+                }
+                
+                const newMessage = {
+                    id: messageId, content: userMessage, sender: 'user', type: 'text', isPinned: false
+                };
+
+                // Add file info if present
+                if (uploadedFileContent) {
+                    newMessage.fileName = uploadedFileName;
+                    userMessage = `Based on the document "${uploadedFileName}", the content is:\n\n---\n${uploadedFileContent}\n---\n\nMy question is: ${userMessage}`;
+                    uploadedFileContent = null; // Reset after use
+                    uploadedFileName = null;
+                    fileIndicator.classList.add('hidden');
+                }
+                
+                chat.messages.push(newMessage);
+                chat.lastUsed = Date.now();
+                
+                renderMessage(newMessage);
+                renderChatHistory(); // Update history to show new time
+                userInput.value = '';
+                
+                saveStateToLocalStorage();
+                logActivity(`Sent message in "${chat.name}"`);
+
+                if (selectedTool === 'deep-research') {
+                    showLoadingIndicator('Deep researching...');
+                    let timer = 0;
+                    const interval = setInterval(() => {
+                        timer++;
+                        const loadingText = document.getElementById('loading-text');
+                        if (loadingText) {
+                            loadingText.textContent = `Deep researching... (${timer}s)`;
+                        }
+                    }, 1000);
+
+                    try {
+                        const aiResponse = await getGeminiResponse(`Perform a deep research on the following topic and provide a comprehensive summary: ${newMessage.content}`);
+                        typeAndRenderMarkdown(aiResponse);
+                    } catch (error) {
+                        console.error("Deep research failed:", error);
+                    } finally {
+                        clearInterval(interval);
+                        hideLoadingIndicator();
+                    }
+                } else {
+                    showLoadingIndicator();
+                    try {
+                        const aiResponse = await getGeminiResponse(userMessage);
+                        typeAndRenderMarkdown(aiResponse);
+                    } catch (error) {
+                        console.error("Message sending failed:", error);
+                    }
+                }
+                
+                // Clear selected tool after sending
+                if (selectedTool) {
+                    clearSelectedTool();
+                }
+            };
+
+            sendBtn.addEventListener('click', () => {
+                if (abortController) { // If it's a stop button
+                    abortController.abort();
+                } else { // If it's a send button
+                    sendMessage();
+                }
+            });
+
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (!abortController) {
+                       sendMessage();
+                    }
+                }
+            });
+            
+            universalSearchInput.addEventListener('input', (e) => {
+                const query = e.target.value;
+                renderChatHistory(query);
+            });
+            
+            assistantDropdown.addEventListener('click', () => {
+                assistantMenu.classList.toggle('hidden');
+            });
+            
+            document.addEventListener('click', (event) => {
+                if (!assistantDropdown.contains(event.target)) {
+                    assistantMenu.classList.add('hidden');
+                }
+                if (!improvePromptBtn.contains(event.target)) {
+                    improvePromptMenu.classList.add('hidden');
+                }
+                 if (!quickPromptsBtn.contains(event.target)) {
+                    quickPromptsMenu.classList.add('hidden');
+                }
+                // Close chat options menus if clicking outside
+                if (!event.target.closest('.chat-options-menu') && !event.target.closest('.fa-ellipsis-v')) {
+                    document.querySelectorAll('.chat-options-menu').forEach(m => m.remove());
+                }
+            });
+
+            assistantMenu.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const assistant = btn.dataset.assistant;
+                    const premiumFeature = btn.dataset.premiumFeature;
+
+                    if (assistant) {
+                        if (assistant !== currentAssistant) {
+                            switchAssistant(assistant);
+                        }
+                    } else if (premiumFeature) {
+                        if (userTier === 'premium') {
+                            switchAssistant(premiumFeature);
+                        } else {
+                            showMessageBox('This is a premium feature. Please upgrade.', true);
+                            showModal(paymentModal);
+                        }
+                    }
+                    assistantMenu.classList.add('hidden');
+                });
+            });
+
+            document.getElementById('toggle-auth-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleAuthView(!isLoginView);
+            });
+            
+            const toggleAuthView = (showLogin) => {
+                const authSubtitle = document.getElementById('auth-subtitle');
+                const authSubmitBtn = document.getElementById('auth-submit-btn');
+                const authToggleText = document.getElementById('auth-toggle-text');
+                const confirmPasswordField = document.getElementById('confirm-password-field');
+                const fullNameField = document.getElementById('full-name-field');
+                const captchaField = document.getElementById('captcha-field');
+                
+                isLoginView = showLogin;
+                if (isLoginView) {
+                    authSubtitle.textContent = 'Welcome back. Please log in.';
+                    authSubmitBtn.textContent = 'Log In';
+                    authToggleText.innerHTML = "Don't have an account? <a href='#' id='toggle-auth-link' class='text-accent-primary hover:underline'>Sign Up</a>";
+                    confirmPasswordField.classList.add('hidden');
+                    fullNameField.classList.add('hidden');
+                    captchaField.classList.add('hidden');
+                } else {
+                    authSubtitle.textContent = 'Create your account.';
+                    authSubmitBtn.textContent = 'Sign Up';
+                    authToggleText.innerHTML = "Already have an account? <a href='#' id='toggle-auth-link' class='text-accent-primary hover:underline'>Log In</a>";
+                    confirmPasswordField.classList.remove('hidden');
+                    fullNameField.classList.remove('hidden');
+                    captchaField.classList.remove('hidden');
+                    generateCaptcha();
+                }
+                
+                document.getElementById('toggle-auth-link').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    toggleAuthView(!isLoginView);
+                });
+            };
+            
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('auth-email').value;
+                const password = document.getElementById('auth-password').value;
+                
+                if (!isLoginView) {
+                    const confirmPassword = document.getElementById('auth-confirm-password').value;
+                    const name = document.getElementById('auth-full-name').value;
+                    const captchaInput = document.getElementById('captcha-input').value;
+                    
+                    if (captchaInput.toLowerCase() !== captchaText.toLowerCase()) {
+                        showMessageBox("Incorrect CAPTCHA text.", true);
+                        generateCaptcha(); // Reload captcha
+                        return;
+                    }
+                    if (password !== confirmPassword) {
+                        showMessageBox("Passwords do not match.", true);
+                        return;
+                    }
+                    userName = name;
+                } else {
+                    userName = email.split('@')[0];
+                }
+
+                console.log(isLoginView ? 'Logging in...' : 'Signing up...', { email, password });
+                showMessageBox(isLoginView ? "Login successful!" : "Account created!");
+                
+                userEmail = email;
+                userEmailDisplay.textContent = email;
+                userNameDisplay.textContent = userName;
+                userAvatar.src = `https://placehold.co/40x40/5a5a5a/ffffff?text=${userName.charAt(0).toUpperCase()}`;
+                document.getElementById('welcome-message').textContent = `Hello, ${userName}!`;
+                
+                saveStateToLocalStorage();
+                logActivity(isLoginView ? 'Logged in' : 'Signed up');
+                
+                setTimeout(() => {
+                    showPage(chatApp);
+                    switchAssistant('professional');
+                }, 1000);
+            });
+            
+            const feedbackForm = document.getElementById('feedback-form');
+            feedbackForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('feedback-name').value;
+                const email = document.getElementById('feedback-email').value;
+                const rating = feedbackForm.querySelector('input[name="rating"]:checked').value;
+                const message = document.getElementById('feedback-message').value;
+                
+                console.log(`--- New Feedback ---
+                To: ${FEEDBACK_EMAIL}
+                From: ${name} (${email})
+                Rating: ${rating}
+                Message: ${message}`);
+                
+                showMessageBox("Feedback submitted! Thank you.");
+                hideModal(feedbackModal);
+                feedbackForm.reset();
+            });
+            
+            // Payment Modal Logic
+            const paymentTabs = document.querySelectorAll('.payment-tab-btn');
+            const paymentContents = document.querySelectorAll('.payment-content');
+            paymentTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    paymentTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const target = tab.dataset.tab;
+                    paymentContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${target}-payment`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            document.getElementById('payment-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const cardHolderName = document.getElementById('card-holder-name').value;
+                console.log(`Simulating payment of ₹99 for ${cardHolderName} to ${PAYMENT_EMAIL}`);
+                
+                // --- In a real application, you would process the payment here ---
+                // For this simulation, we'll just upgrade the user
+                
+                userTier = 'premium';
+                updateUserTierUI();
+                saveStateToLocalStorage();
+                logActivity('Upgraded to Premium');
+
+                hideModal(paymentModal);
+                showMessageBox('Payment successful! Welcome to Premium.');
+            });
+
+            // File Upload Handler
+            fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (!file) {
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    uploadedFileContent = e.target.result;
+                    uploadedFileName = file.name;
+                    hideModal(fileUploadModal);
+                    
+                    // Show file indicator
+                    fileIndicatorName.textContent = uploadedFileName;
+                    fileIndicator.classList.remove('hidden');
+                    fileIndicator.classList.add('flex');
+
+                    showMessageBox(`File "${file.name}" loaded. Your next message will include its content.`);
+                    userInput.focus();
+                    logActivity(`Uploaded file: ${file.name}`);
+                };
+                reader.onerror = () => {
+                    showMessageBox('Error reading file.', true);
+                };
+                reader.readAsText(file);
+
+                // Reset file input so user can upload the same file again
+                fileInput.value = '';
+            });
+
+            removeFileBtn.addEventListener('click', () => {
+                uploadedFileContent = null;
+                uploadedFileName = null;
+                fileIndicator.classList.add('hidden');
+                showMessageBox('File removed.');
+            });
+
+            
+            newProjectForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const input = document.getElementById('new-project-name');
+                const name = input.value.trim();
+                if (name) {
+                    createProject(name);
+                    input.value = '';
+                }
+            });
+            
+            document.getElementById('reload-captcha-btn').addEventListener('click', generateCaptcha);
+
+            // Tools dropdown logic
+            toolsDropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toolsDropdownMenu.classList.toggle('hidden');
+            });
+
+            quickPromptsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                quickPromptsMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!toolsDropdownBtn.contains(e.target)) {
+                    toolsDropdownMenu.classList.add('hidden');
+                }
+            });
+
+            const clearSelectedTool = () => {
+                selectedTool = null;
+                selectedToolIndicator.classList.add('hidden');
+                document.querySelectorAll('.tool-select-btn .fa-check').forEach(tick => tick.classList.add('opacity-0'));
+            };
+
+            document.querySelectorAll('.tool-select-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const toolName = btn.dataset.tool;
+                    if (selectedTool === toolName) {
+                        clearSelectedTool();
+                    } else {
+                        selectedTool = toolName;
+                        selectedToolName.textContent = btn.querySelector('span span').textContent;
+                        selectedToolIndicator.classList.remove('hidden');
+                        
+                        // Update ticks
+                        document.querySelectorAll('.tool-select-btn .fa-check').forEach(tick => tick.classList.add('opacity-0'));
+                        btn.querySelector('.fa-check').classList.remove('opacity-0');
+                    }
+                    toolsDropdownMenu.classList.add('hidden');
+                });
+            });
+
+            clearToolBtn.addEventListener('click', clearSelectedTool);
+            
+            // Improve Prompt Logic
+            improvePromptBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (userInput.value.trim() !== '') {
+                    improvePromptMenu.classList.toggle('hidden');
+                } else {
+                    showMessageBox('Please type something first to improve it.', true);
+                }
+            });
+            improvePromptMenu.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const type = btn.dataset.improve;
+                    const originalText = userInput.value;
+                    const prompt = `Rewrite the following text to make it more ${type}: "${originalText}"`;
+                    
+                    improvePromptMenu.classList.add('hidden');
+                    showLoadingIndicator('Improving prompt...');
+                    try {
+                        const improvedText = await getGeminiResponse(prompt);
+                        userInput.value = improvedText;
+                    } catch (e) {
+                        showMessageBox('Could not improve prompt.', true);
+                    } finally {
+                        hideLoadingIndicator();
+                    }
+                });
+            });
+
+            // Canvas Logic
+            canvasRunBtn.addEventListener('click', runCodeInCanvas);
+            canvasCopyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(canvasCodeArea.value).then(() => showMessageBox('Code copied!'));
+            });
+
+            // Virtual AI Assistant Logic
+            if (virtualAiRecognition) {
+                virtualAiVisualizer.addEventListener('click', () => {
+                    virtualAiStatus.textContent = 'Listening...';
+                    virtualAiRecognition.start();
+                });
+
+                virtualAiRecognition.onresult = async (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    virtualAiStatus.textContent = `You said: "${transcript}"`;
+                    try {
+                        const response = await getGeminiResponse(transcript, VIRTUAL_AI_API_KEY);
+                        virtualAiStatus.textContent = "AURA: " + response;
+                        speakText(response);
+                    } catch (e) {
+                        virtualAiStatus.textContent = "Sorry, I couldn't get a response.";
+                    }
+                };
+
+                virtualAiRecognition.onerror = (event) => {
+                    virtualAiStatus.textContent = 'Error occurred in recognition: ' + event.error;
+                };
+
+                virtualAiRecognition.onend = () => {
+                    // You can add logic here if needed when listening ends
+                };
+            }
+            
+            // NEW: Share Chat Logic
+            shareChatBtn.addEventListener('click', () => {
+                const chat = chats[currentAssistant][activeChatId];
+                if (!chat || chat.messages.length === 0) {
+                    showMessageBox('Nothing to share yet!', true);
+                    return;
+                }
+                const lastMessage = chat.messages[chat.messages.length - 1];
+                const shareText = `Check out this response from AURA AI:\n\n"${lastMessage.content.substring(0, 100)}..."\n\nShared from AURA AI.`;
+                const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+                window.open(whatsappUrl, '_blank');
+            });
+
+            // NEW: Right Sidebar Logic
+            rightSidebarToggle.addEventListener('click', () => rightSidebar.classList.add('open'));
+            rightSidebarClose.addEventListener('click', () => rightSidebar.classList.remove('open'));
+
+            // NEW: Templates Logic
+            templatesBtn.addEventListener('click', () => {
+                switchToTemplatesView();
+                rightSidebar.classList.remove('open');
+            });
+            activityBtn.addEventListener('click', () => {
+                switchToActivityView();
+                rightSidebar.classList.remove('open');
+            });
+            favoritesBtn.addEventListener('click', () => {
+                switchToTemplatesView(true);
+                rightSidebar.classList.remove('open');
+            });
+
+            templateSearchInput.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') {
+                    const query = e.target.value.trim();
+                    if(query) searchGoogleTemplates(query);
+                }
+            });
+            
+            downloadTemplateBtn.addEventListener('click', downloadTemplateAsImage);
+
+            // Keyboard Shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    sendMessage();
+                }
+                if (e.ctrlKey && e.key === 'n') {
+                    e.preventDefault();
+                    createNewChat();
+                }
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    showModal(settingsModal);
+                }
+            });
+
+
+            populateVoiceList();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = populateVoiceList;
+            }
+            
+            // Landing page chart
+            const ctx = document.getElementById('efficiency-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Task 1', 'Task 2', 'Task 3', 'Task 4', 'Task 5', 'Task 6'],
+                    datasets: [{
+                        label: 'Time Saved with AURA AI (in hours)',
+                        data: [2, 3, 1.5, 4, 2.5, 5],
+                        backgroundColor: 'rgba(142, 68, 173, 0.2)',
+                        borderColor: 'rgba(142, 68, 173, 1)',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    scales: { y: { beginAtZero: true } },
+                    plugins: { legend: { labels: { color: getComputedStyle(document.body).getPropertyValue('--text-primary') } } }
+                }
+            });
+        });
+
+    </script>
+      
+       <!-- ok -->
+
+</body>
+</html>
